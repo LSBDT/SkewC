@@ -1,0 +1,105 @@
+---
+title: "Trime clustering of the coverage matrix"
+author: "Imad Abugessaisa"
+date: "January 12, 2020"
+output: html_document
+---
+
+```{r echo=FALSE}
+knitr::opts_knit$set(verbose = TRUE)
+options(width=100)
+```
+
+## Skewc
+
+This is an R Markdown document to create the required coverage matrix. The input is the vector of the normalized values from the genebody coverge script. 
+
+```{r load required libraries}
+library(tclust)
+```
+
+## 
+
+##
+```{r Creat list var}
+coverageDF_filtered_Clustering <- coverageDF_filtered
+row.names(coverageDF_filtered_Clustering) <-
+coverageDF_filtered_Clustering$Annotation
+coverageDF_filtered_Clustering$Annotation <- NULL
+trimClust <- function(x) {
+clus <- tclust (
+coverageDF_filtered_Clustering,
+k = 1,
+alpha = 0.099,
+restr.fact = 1,
+restr = "eigen",
+equal.weights = TRUE
+)
+result <- clus
+return(result)
+}
+trimClustResult <- trimClust(x)
+
+```
+##
+```{r Plot the clustring result}
+pdf("./E-MTAB-2600_CLUSTResult.pdf")
+plot(
+trimClustResult,
+main = list(
+"mES:E-MTAB-2600: SMARTer\nGene coverage clusters",
+cex = 1.5,
+col = "black",
+font = 2
+)
+)
+box(lty = "solid", col = 'black', lwd = 3)
+axis(
+side = 1,
+lwd = 2,
+lwd.ticks = 4,
+col.ticks = "black"
+)
+axis(
+side = 2,
+lwd = 3,
+lwd.ticks = 4,
+col.ticks = "black"
+)
+dev.off()
+
+```
+##
+
+```{r}
+clusoutdf <- as.data.frame(trimClustResult$cluster)
+coverageDF_filtered_ClusteringBINF <-
+cbind(coverageDF_filtered_Clustering, clus$cluster)
+E_MTAB_2600_GoodCells_cellID <-
+subset(
+coverageDF_filtered_ClusteringBINF,
+coverageDF_filtered_ClusteringBINF$`clus$cluster` == 1
+)
+write.table(
+row.names(E_MTAB_2600_GoodCells_cellID),
+file = "E_MTAB_2600_TypicalCellsID.tsv",
+sep = "\t",
+row.names = F,
+quote = F,
+col.names = F
+)
+E_MTAB_2600_Skewed_coverage_cellID <-
+subset(
+coverageDF_filtered_ClusteringBINF,
+coverageDF_filtered_ClusteringBINF$`clus$cluster` == 0
+)
+write.table(
+row.names(E_MTAB_2600_Skewed_coverage_cellID),
+file = "E-MTAB-2600_SkewedCellsID.tsv",
+sep = "\t",
+row.names = F,
+quote = F,
+col.names = F
+)
+```
+
