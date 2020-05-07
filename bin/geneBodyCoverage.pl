@@ -15,7 +15,7 @@ if(scalar(@ARGV)<2){
 	print STDERR "  - Does gene body coverage calculation using algorithm from RSeQC geneBody_coverage.py\n";
 	print STDERR "  - RSeQC website: http://rseqc.sourceforge.net)\n";
 	print STDERR "  \n";
-	print STDERR "USAGE: myGeneBodyCoverage.pl -o \$outdir \$reference \$input > \$skewness\n";
+	print STDERR "USAGE: geneBodyCoverage.pl -o \$outdir \$reference \$input > \$skewness\n";
 	print STDERR "  \$input      BAM/BED file or directory you want to calculate\n";
 	print STDERR "  \$outdir     Output directory (default=".")\n";
 	print STDERR "  \$reference  gene model downloaded from RSeQC website\n";

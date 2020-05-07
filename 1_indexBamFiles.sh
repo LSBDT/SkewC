@@ -18,7 +18,7 @@ udocker run \
   --user=root \
   --volume=$workdir:/root/work \
   --workdir=/root/work \
-  moirai2/skewc10x \
+  moirai2/skewc \
   perl bin/indexBamFiles.pl \
   $indir \
   > /dev/null 2>&1
@@ -28,7 +28,7 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc10x \
+  moirai2/skewc \
   perl bin/indexBamFiles.pl \
   $indir \
   > /dev/null 2>&1

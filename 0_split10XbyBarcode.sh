@@ -15,6 +15,7 @@ outdir=$3
 if [ -z "$outdir" ]; then
 outdir="input"
 fi
+mkdir -p $outdir
 workdir=`pwd`;
 if [ -x "$(command -v udocker)" ];then
 udocker run \
@@ -22,7 +23,7 @@ udocker run \
   --user=root \
   --volume=$workdir:/root/work \
   --workdir=/root/work \
-  moirai2/skewc10x \
+  moirai2/skewc \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \
@@ -34,7 +35,7 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc10x \
+  moirai2/skewc \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \
