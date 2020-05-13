@@ -1,7 +1,7 @@
 #!/bin/bash
-if [ $# -lt 1 ]; then
+if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./geneBodyCoverage.sh \$species \$indir \$outdir"
+  echo "Usage: ./2_geneBodyCoverage.sh \$species \$indir \$outdir"
   echo ""
   echo "  \$species  mm10 [mouse] or hg38 [human]"
   echo "  \$indir    directory where BAM files and BAI files are stored (Default=input)"
@@ -56,3 +56,4 @@ docker run \
 else
   echo "Please install udocker or docker"
 fi
+rmdir workers

@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 2 ]; then
   echo ""
-  echo "Usage: ./split10XbyBarcode.sh \$bam \$barcode \$outdir"
+  echo "Usage: ./0_split10XbyBarcode.sh \$bam \$barcode \$outdir"
   echo ""
   echo "  \$bam      BAM file of 10XGenomics"
   echo "  \$barcode  barcode.tsv file of 10XGenomics"

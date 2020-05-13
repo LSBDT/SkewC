@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./SkewC.sh \$basename \$indir \$outdir"
+  echo "Usage: ./3_SkewC.sh \$basename \$indir \$outdir"
   echo ""
   echo "  \$indir    directory where coverage files are stored (Default=coverage)"
   echo "  \$outdir   directory where results files will be output (Default=skewc)"
@@ -21,4 +21,31 @@ if [ -z "$outdir" ]; then
 outdir="skewc"
 fi
 mkdir -p $outdir
-bin/SkewC.pl $basename $indir $outdir
+workdir=`pwd`;
+if [ -x "$(command -v udocker)" ];then
+udocker run \
+  --rm \
+  --user=root \
+  --volume=$workdir:/root/work \
+  --workdir=/root/work \
+  moirai2/skewc \
+  perl bin/SkewC.pl \
+  $basename \
+  $indir \
+  $outdir \
+  > /dev/null 2>&1
+elif [ -x "$(command -v docker)" ]; then
+docker run \
+  -it \
+  --rm \
+  -v $workdir:/root/work \
+  --workdir /root/work \
+  moirai2/skewc \
+  perl bin/SkewC.pl \
+  $basename \
+  $indir \
+  $outdir \
+  > /dev/null 2>&1
+else
+  echo "Please install udocker or docker"
+fi

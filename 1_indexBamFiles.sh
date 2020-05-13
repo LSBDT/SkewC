@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./indexBamFiles.sh \$indir"
+  echo "Usage: ./1_indexBamFiles.sh \$indir"
   echo ""
   echo "  \$indir  Directory where bam files are stored (Default=input)"
   echo ""
