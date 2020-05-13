@@ -33,6 +33,14 @@ hdrgenome/
     ├── SkewC_Plot_Typical_Skewed_Coverage.Rmd
     └── SkewC_TrimClustering.Rmd -
 ```
+## System
+* Linux
+* MacOSX
+## Requirement
+* *git* - https://git-scm.com
+* *docker* (https://www.docker.com) or *udocker* (https://github.com/indigo-dc/udocker)
+* If you are installing to your personal computer and have admin authority, install docker.
+* Install udocker, if you want to run pipeline in Linux environment where you don't have any admin authority (and can't run docker).
 ## Install
 ```
 git clone https://github.com/LSBDT/SkewC.git
