@@ -34,21 +34,31 @@ hdrgenome/
     └── SkewC_TrimClustering.Rmd -
 ```
 ## System
-* Linux
-* MacOSX
+* Linux or MacOSX
 ## Requirement
 * *git* - https://git-scm.com
 * *docker* (https://www.docker.com) or *udocker* (https://github.com/indigo-dc/udocker)
 * If you are installing to your personal computer and have admin authority, install docker.
 * Install udocker, if you want to run pipeline in Linux environment where you don't have any admin authority (and can't run docker).
 ## Install
+* After you install git and docker/udocker.
 ```
 git clone https://github.com/LSBDT/SkewC.git
 ```
 ## Pipeline
+* All bash commands are executed from a SkewC root directory.
+* To run sample, run these commands:
+```
+cd SkewC/
+bash 0_split10XbyBarcode.sh example/example.bam example/barcodes.tsv.gz
+bash 1_indexBamFiles.sh
+bash 2_geneBodyCoverage.sh
+bash 3_SkewC.sh
+```
+* Final HTML output will be stored under a directory skewc/
 ### 0_split10XbyBarcode.sh
 ```
-0_split10XbyBarcode.sh $bam $barcode $outdir
+bash 0_split10XbyBarcode.sh $bam $barcode $outdir
 ```
 * Arguments:
   * $bam     - BAM file from 10XGenomics analysis
@@ -67,7 +77,7 @@ outs/filtered_feature_bc_matrix/
 * If you don't mind using "input" as directory name, you can omit $outdir argument.
 ### 1_indexBamFiles.sh
 ```
-1_indexBamFiles.sh $indir
+bash 1_indexBamFiles.sh $indir
 ```
 * Arguments:
   * $indir - directory where split BAM files are stored (default='input')
@@ -77,7 +87,9 @@ outs/filtered_feature_bc_matrix/
 samtools index BAM
 ```
 ### 2_geneBodyCoverage.sh
-2_geneBodyCoverage.sh $species $indir $outdir
+```
+bash 2_geneBodyCoverage.sh $species $indir $outdir
+```
 * Arguments:
   * $species - human 'hg38' or mouse 'mm10' (default='hg38')
   * $indir  - directory where split BAM and index files are stored (default='input')
@@ -97,7 +109,9 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i input/example.TTTGTCATCTAACGGT-1.bam  -o coverage > log.txt
 ```
 ### 3_SkewC.sh
-3_SkewC.sh $basename $basename $indir $outdir
+```
+bash 3_SkewC.sh $basename $indir $outdir
+```
 * Arguments:
   * $basename - basename of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
