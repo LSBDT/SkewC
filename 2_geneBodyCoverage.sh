@@ -38,8 +38,7 @@ udocker run \
   -r \
   $indir \
   $outdir \
-  "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log" \
-  > /dev/null 2>&1
+  "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log"
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -51,8 +50,7 @@ docker run \
   -r \
   $indir \
   $outdir \
-  "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log" \
-  > /dev/null 2>&1
+  "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log"
 else
   echo "Please install udocker or docker"
 fi

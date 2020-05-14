@@ -75,6 +75,7 @@ outs/filtered_feature_bc_matrix/
 * Since 10XGenomics output one BAM file, split step is needed.
 * If BAM files are split by cells already, you can skip this step.
 * If you don't mind using "input" as directory name, you can omit $outdir argument.
+* Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
 ### 1_indexBamFiles.sh
 ```
 bash 1_indexBamFiles.sh $indir
@@ -83,6 +84,7 @@ bash 1_indexBamFiles.sh $indir
   * $indir - directory where split BAM files are stored (default='input')
 * Runs "samtools index" on all BAM files under $indir directory.
 * If you want, it's ok to run samtools index command through command line.
+* Index files (file suffix='.bai') will becreated under same directory where BAM files exist.
 ```
 samtools index BAM
 ```
@@ -101,9 +103,13 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 * 'geneBodyCoverage.pl' is a perl script to imitate process of RSeQC 'geneBody_coverage.py' (http://rseqc.sourceforge.net/#genebody-coverage-py).
 * 'geneBodyCoverage.pl' was written to reduce running time of geneBodyCoverage step by about 10 folds.
 * Although same algorithm is used, output from geneBodyCoverage.pl and geneBody_coverage.py differs a bit, but it's negligible.
-* 'geneBodyCoverage.pl' will create an index file under reference directory at the first iteration.  From second iteration on, indexed reference file will be used to speed up calculation.   Don't run geneBodyCoverage.pl in parallel (at the same time) when it's creating an index file.
+* 'geneBodyCoverage.pl' will create an index file under a reference directory (default='reference') at the beginning of first iteration.  From second iteration on, indexed reference file will be used to speed up calculation.   Don't run geneBodyCoverage.pl in parallel (at the same time) when it's creating an index file.
 * Reference column of BAM file from 10XGenomics, chromosome are represented without "chr".  For chr1 example, reference column of normal BAM file is written "chr1", but in 10XGenomics, it's written "1" only.
 * 'geneBodyCoverage.pl' will automatically detect the difference in reference column and create an index reference file with/without 'chr'.
+* Three files will be created under outdir (default='coverage')
+  * XXXXXXXXXX.geneBodyCoverage
+  * XXXXXXXXXX.geneBodyCoverage.txt - 
+  * XXXXXXXXXX.log
 * If you want to run, original 'geneBody_coverage.py':
 ```
 python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i input/example.TTTGTCATCTAACGGT-1.bam  -o coverage > log.txt

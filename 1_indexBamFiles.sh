@@ -20,8 +20,7 @@ udocker run \
   --workdir=/root/work \
   moirai2/skewc \
   perl bin/indexBamFiles.pl \
-  $indir \
-  > /dev/null 2>&1
+  $indir
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -30,8 +29,7 @@ docker run \
   --workdir /root/work \
   moirai2/skewc \
   perl bin/indexBamFiles.pl \
-  $indir \
-  > /dev/null 2>&1
+  $indir
 else
   echo "Please install udocker or docker"
 fi

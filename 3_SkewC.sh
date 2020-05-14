@@ -32,8 +32,7 @@ udocker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir \
-  > /dev/null 2>&1
+  $outdir
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -44,8 +43,7 @@ docker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir \
-  > /dev/null 2>&1
+  $outdir
 else
   echo "Please install udocker or docker"
 fi

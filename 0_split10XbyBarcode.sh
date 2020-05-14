@@ -27,8 +27,7 @@ udocker run \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \
-  $barcode \
-  > /dev/null 2>&1
+  $barcode
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -39,8 +38,7 @@ docker run \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \
-  $barcode \
-  > /dev/null 2>&1
+  $barcode
 else
   echo "Please install udocker or docker"
 fi
