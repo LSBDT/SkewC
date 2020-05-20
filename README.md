@@ -84,6 +84,8 @@ bash 1_indexBamFiles.sh $indir
   * $indir - directory where split BAM files are stored (default='input')
 * Runs "samtools index" on all BAM files under $indir directory.
 * If you want, it's ok to run samtools index command through command line.
+* For non10XGenomics data, you can start from here.
+* Create $indir directory and put the BAM files (splitted by cells) there.
 * Index files (file suffix='.bai') will becreated under same directory where BAM files exist.
 ```
 samtools index BAM
@@ -108,7 +110,7 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 * 'geneBodyCoverage.pl' will automatically detect the difference in reference column and create an index reference file with/without 'chr'.
 * Three files will be created under outdir (default='coverage')
   * XXXXXXXXXX.geneBodyCoverage
-  * XXXXXXXXXX.geneBodyCoverage.txt - 
+  * XXXXXXXXXX.geneBodyCoverage.txt -
   * XXXXXXXXXX.log
 * If you want to run, original 'geneBody_coverage.py':
 ```

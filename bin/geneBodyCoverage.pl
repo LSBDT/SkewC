@@ -74,22 +74,23 @@ foreach my $inputfile(@inputfiles){
 ############################## checkChrName ##############################
 sub checkChrName{
 	my $inputfile=shift();
+	my $hash={};
 	if($inputfile=~/\.bam$/){
-		open(IN,"samtools view $inputfile|");
-		my $line=<IN>;
+		open(IN,"samtools view -H $inputfile|");
+		while(<IN>){
+			if(/SN:(\S)+/){$hash->{$1}++;}
+		}
 		close(IN);
-		chomp($line);
-		my @tokens=split(/\t/,$line);
-		if($tokens[2]=~/^chr/){return 0;}
-		else{return 1;}
 	}else{
-		my $line=<IN>;
+		open(IN,$inputfile);
+		while(<IN>){
+			if($_!~/^\@/){last;}
+			if(/SN:(\S)+/){$hash->{$1}++;}
+		}
 		close(IN);
-		chomp($line);
-		my @tokens=split(/\t/,$line);
-		if($tokens[0]=~/^chr/){return 0;}
-		else{return 1;}
 	}
+	foreach my $key(keys(%{$hash})){if($key=~/^chr/){return 0;}}
+	return 1;
 }
 ############################## noChrFile ##############################
 sub noChrFile{
@@ -108,7 +109,7 @@ sub noChrFile{
 	if($chrExists==0){return $reference;}
 	my $outfile=dirname($reference)."/".basename($reference,".bed").".nochr.bed";
 	if(-e $outfile){return $outfile;}
-	print STDERR "Creating no chr version of gene model: $reference\n";
+	print STDERR "# Creating no chr version of gene model: $reference\n";
 	open(IN,$reference);
 	open(OUT,">$outfile");
 	while(<IN>){
@@ -187,23 +188,23 @@ sub convertBamToBed{
 	my $reference=shift();
 	my $bamfile=shift();
 	my ($fh,$filteredfile)=tempfile(SUFFIX=>'.bam');
-	print STDERR "Filtering BAM file: $bamfile\n";
+	print STDERR "# Filtering BAM file: $bamfile\n";
 	system("samtools view -q 4 -bF 0x704 $bamfile > $filteredfile");
 	#system("samtools view -q 0 -bF 0x704 $bamfile > $filteredfile");
 	my ($fh2,$splitfile)=tempfile(SUFFIX=>'.bed');
-	print STDERR "Converting BAM to BED: $splitfile\n";
+	print STDERR "# Converting BAM to BED: $splitfile\n";
 	system("bedtools bamtobed -splitD -i $filteredfile > $splitfile");
 	close($fh2);
 	unlink($filteredfile);
 	my ($fh3,$intersectfile)=tempfile(SUFFIX=>'.bed');
-	print STDERR "Intersect BED with reference: $intersectfile\n";
+	print STDERR "# Intersect BED with reference: $intersectfile\n";
 	system("bedtools intersect -u -a $splitfile -b $reference > $intersectfile");
 	close($fh3);
 	unlink($splitfile);
 	my $count=`samtools view -c -f 1 $bamfile`;
 	chomp($count);
 	if($count>0){
-		print STDERR "Remove intersecting paired-ends: $intersectfile\n";
+		print STDERR "# Remove intersecting paired-ends: $intersectfile\n";
 		return removeOverlappingPairRegion($intersectfile);
 	}else{
 		return $intersectfile;
@@ -245,7 +246,7 @@ sub removeOverlappingPairRegion{
 			if($id2 ne $previd){$previd=$id2;@pairs=();}
 			push(@pairs,[$chr,$start,$end]);
 		}else{
-			print STDERR "Non paired ID found...\n";
+			print STDERR "# Non paired ID found...\n";
 		}
 		if($start<$end){print $fh5 "$chr\t$start\t$end\t$id\t$score\t$strand\n";}
 		if(!defined($line)){$line=<IN>;}
@@ -290,7 +291,7 @@ sub standardDeviation{
 sub calculatePercentile{
 	my $reference=shift();
 	my $indexfile=shift();
-	print STDERR "Calculating percentile of gene model: $reference...\n";
+	print STDERR "# Calculating percentile of gene model: $reference...\n";
 	open(OUT,">$indexfile");
 	open(IN,$reference);
 	while(<IN>){
@@ -332,7 +333,7 @@ sub geneBodyCoverage{
 	my $reference=shift();
 	my $positions={};
 	my $pairs={};
-	print STDERR "Loading reference positions: $indexfile\n";
+	print STDERR "# Loading reference positions: $indexfile\n";
 	open(IN,$indexfile);
 	my $positions={};
 	while(<IN>){
@@ -342,7 +343,7 @@ sub geneBodyCoverage{
 		foreach my $position(@percents){$positions->{$chr}->{$position}=0;}
 	}
 	close(IN);
-	print STDERR "Counting positions: $bedfile\n";
+	print STDERR "# Counting positions: $bedfile\n";
 	open(IN,$bedfile);
 	while(<IN>){
 		chomp;
@@ -354,7 +355,7 @@ sub geneBodyCoverage{
 		}
 	}
 	close(IN);
-	print STDERR "Calculating genebody coverage: $bedfile\n";
+	print STDERR "# Calculating genebody coverage: $bedfile\n";
 	open(IN,$indexfile);
 	my @counts=();
 	for(my $i=0;$i<100;$i++){$counts[$i]=0;}
