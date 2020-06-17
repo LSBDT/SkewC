@@ -1,16 +1,19 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./3_SkewC.sh \$basename \$indir \$outdir"
+  echo "Usage: ./3_SkewC.sh \$prjname \$indir \$outdir \$filter"
   echo ""
-  echo "  \$indir    directory where coverage files are stored (Default=coverage)"
+  echo " \$prjname   name of the project (Default=COV)"
+  echo "   \$indir   directory where coverage files are stored (Default=coverage)"
   echo "  \$outdir   directory where results files will be output (Default=skewc)"
+  echo "  \$filter   a list of cellIDs to be removed (Default=none)"
   echo ""
   exit
 fi
 basename=$1
 indir=$2
 outdir=$3
+filter=$4
 if [ -z "$basename" ]; then
 basename="COV"
 fi
@@ -32,7 +35,8 @@ udocker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir
+  $outdir \
+  $filter
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -43,7 +47,8 @@ docker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir
+  $outdir \
+  $filter
 else
   echo "Please install udocker or docker"
 fi

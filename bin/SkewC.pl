@@ -7,22 +7,37 @@ use File::Temp qw/tempfile/;
 use vars qw($opt_s $opt_e $opt_d);
 getopts('e:s:d:');
 my ($prgname,$prgdir,$prgsuffix)=fileparse($0);
-if(scalar(@ARGV)<3){print STDERR "perl SkewC.pl INDIR OUTDIR BASENAME\n";exit(0);}
+if(scalar(@ARGV)<3){print STDERR "perl SkewC.pl INDIR OUTDIR BASENAME FILTER\n";exit(0);}
 my $basename=$ARGV[0];
 my $indir=$ARGV[1];
 my $outdir=$ARGV[2];
+my $filter=$ARGV[3];
 my $start=defined($opt_s)?$opt_s:0.05;
 my $end=defined($opt_e)?$opt_e:1.00;
 my $step=defined($opt_d)?$opt_d:0.05;
 my @files=`ls $indir/*.r`;
+mkdir($outdir);
+my $filters={};
+if(-e $filter){
+	open(IN,$filter);
+	while(<IN>){
+		chomp;
+		my ($id,@tokens)=split(/\t/);
+		$filters->{$id}=1;
+	}
+	close(IN);
+}
 my ($fh,$tmpfile)=tempfile(DIR=>$outdir,TEMPLATE=>'XXXXXX',SUFFIX=>'.r');
 foreach my $file(@files){
 	chomp($file);
 	open(IN,$file);
 	while(<IN>){
 		chomp;
-		if($_!~/\<\- c\([\d\.\,]+\)/){next;}
-		print $fh "${basename}_$_\n";
+		if(/^(\w+)\s+\<\- c\([\d\.\,]+\)/){
+			my $id=$1;
+			if(exists($filters->{$id})){;next;}
+			print $fh "${basename}_$_\n";
+		}
 	}
 	close(IN);
 }
@@ -72,3 +87,47 @@ print OUT "</center>\n";
 print OUT "</body>\n";
 print OUT "</html>\n";
 close(OUT);
+
+############################## printTable ##############################
+sub printTable{
+	my @out=@_;
+	my $return_type=$out[0];
+	if(lc($return_type) eq "print"){$return_type=0;shift(@out);}
+	elsif(lc($return_type) eq "array"){$return_type=1;shift(@out);}
+	elsif(lc($return_type) eq "stderr"){$return_type=2;shift(@out);}
+	else{$return_type= 2;}
+	printTableSub($return_type,"",@out);
+}
+sub printTableSub{
+	my @out=@_;
+	my $return_type=shift(@out);
+	my $string=shift(@out);
+	my @output=();
+	for(@out){
+		if(ref( $_ ) eq "ARRAY"){
+			my @array=@{$_};
+			my $size=scalar(@array);
+			if($size==0){
+				if($return_type==0){print $string."[]\n";}
+				elsif($return_type==1){push(@output,$string."[]");}
+				elsif($return_type==2){print STDERR $string."[]\n";}
+			}else{
+				for(my $i=0;$i<$size;$i++){push(@output,printTableSub($return_type,$string."[$i]=>\t",$array[$i]));}
+			}
+		} elsif(ref($_)eq"HASH"){
+			my %hash=%{$_};
+			my @keys=sort{$a cmp $b}keys(%hash);
+			my $size=scalar(@keys);
+			if($size==0){
+				if($return_type==0){print $string."{}\n";}
+				elsif($return_type==1){push( @output,$string."{}");}
+				elsif($return_type==2){print STDERR $string."{}\n";}
+			}else{
+				foreach my $key(@keys){push(@output,printTableSub($return_type,$string."{$key}=>\t",$hash{$key}));}
+			}
+		}elsif($return_type==0){print "$string\"$_\"\n";}
+		elsif($return_type==1){push( @output,"$string\"$_\"");}
+		elsif($return_type==2){print STDERR "$string\"$_\"\n";}
+	}
+	return wantarray?@output:$output[0];
+}

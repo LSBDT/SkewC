@@ -118,13 +118,24 @@ python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i inpu
 ```
 ### 3_SkewC.sh
 ```
-bash 3_SkewC.sh $basename $indir $outdir
+bash 3_SkewC.sh $basename $indir $outdir [$filter]
 ```
 * Arguments:
   * $basename - basename of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
   * $outdir - a directory to store skewc analysis files with index HTML (default='skewc')
+  * $filter -  a list of cellIDs to be removed (Default=none)
 * Run SkewC analysis on all geneBody coverage files under indir.
+* If you want to filter out certain cell.  Prepare a text file with a list of cellIDs.
+* These cellIDs will be removed from SkewC computation.
+* Default is all cells will be computed for SkewC.
+* Example of a list of cell IDs.
+```
+ERR1211178
+ERR1211176
+ERR1211180
+```
+
 ## R Markdown
 1-SkewC_Create_Coverage_Matrixes.Rmd
 To run this,
