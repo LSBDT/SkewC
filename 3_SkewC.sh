@@ -14,6 +14,7 @@ basename=$1
 indir=$2
 outdir=$3
 filter=$4
+option=$5
 if [ -z "$basename" ]; then
 basename="COV"
 fi
@@ -33,10 +34,11 @@ udocker run \
   --workdir=/root/work \
   moirai2/skewc \
   perl bin/SkewC.pl \
+  $option \
   $basename \
   $indir \
   $outdir \
-  $filter
+  $filter \
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   -it \
@@ -45,6 +47,7 @@ docker run \
   --workdir /root/work \
   moirai2/skewc \
   perl bin/SkewC.pl \
+  $option \
   $basename \
   $indir \
   $outdir \
