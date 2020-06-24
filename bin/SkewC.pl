@@ -4,40 +4,27 @@ use File::Basename;
 use Getopt::Std;
 use IO::File;
 use File::Temp qw/tempfile/;
-use vars qw($opt_s $opt_e $opt_d $opt_v);
-getopts('e:s:d:v');
+use vars qw($opt_s $opt_e $opt_d);
+getopts('e:s:d:');
 my ($prgname,$prgdir,$prgsuffix)=fileparse($0);
-if(scalar(@ARGV)<3){print STDERR "perl SkewC.pl INDIR OUTDIR BASENAME FILTER\n";exit(0);}
+if(scalar(@ARGV)<3){print STDERR "perl SkewC.pl BASENAME INDIR OUTDIR\n";exit(0);}
 my $basename=$ARGV[0];
 my $indir=$ARGV[1];
 my $outdir=$ARGV[2];
-my $filter=$ARGV[3];
 my $start=defined($opt_s)?$opt_s:0.05;
 my $end=defined($opt_e)?$opt_e:1.00;
 my $step=defined($opt_d)?$opt_d:0.05;
-my $invertmatch=$opt_v;
 my @files=`ls $indir/*.r`;
 mkdir($outdir);
-my $filters={};
-if(-e $filter){
-	open(IN,$filter);
-	while(<IN>){
-		chomp;
-		my ($id,@tokens)=split(/\t/);
-		$filters->{$id}=1;
-	}
-	close(IN);
-}
 my ($fh,$tmpfile)=tempfile(DIR=>$outdir,TEMPLATE=>'XXXXXX',SUFFIX=>'.r');
 foreach my $file(@files){
 	chomp($file);
 	open(IN,$file);
 	while(<IN>){
 		chomp;
-		if(/^(\w+)\s+\<\- c\([\d\.\,]+\)/){
+		if(/^(\S+)\s+\<\- c\([\d\.\,]+\)/){
 			my $id=$1;
-			if(exists($filters->{$id})){if(!defined($opt_v)){print $fh "${basename}_$_\n";}}
-			elsif(defined($opt_v)){print $fh "${basename}_$_\n";}
+			print $fh "${basename}$_\n";
 		}
 	}
 	close(IN);
