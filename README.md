@@ -9,8 +9,10 @@ hdrgenome/
 ├── 1_indexBamFiles.sh
 ├── 2_geneBodyCoverage.sh
 ├── 3_SkewC.sh
+├── 4_filter.sh
 ├── bash.sh
 ├── bin/
+│   ├── filter.pl
 │   ├── geneBodyCoverage.pl
 │   ├── indexBamFiles.pl
 │   ├── SkewC.pl
@@ -23,15 +25,15 @@ hdrgenome/
 ├── LICENSE
 ├── README.md
 ├── reference/
-│   ├── hg38_Gencode_V28.norRNAtRNA.nochr.bed
+│   ├── hg38_Gencode_V28.norRNAtRNA.bed
 │   └── mm10_Gencode_VM18.norRNAtRNA.bed
 └── RMarkdown/
     ├── coverage.r - sample data for SkewC Rmarkdown
     ├── bash.sh - Running docker image
-    ├── SkewC_Create_Coverage_Matrixes.Rmd
-    ├── SkewC_Plot_Gene_Body_Coverage.Rmd
-    ├── SkewC_Plot_Typical_Skewed_Coverage.Rmd
-    └── SkewC_TrimClustering.Rmd -
+    ├── 1-SkewC_Create_Coverage_Matrixes.Rmd
+    ├── 2-SkewC_Plot_Gene_Body_Coverage.Rmd
+    ├── 3-SkewC_TrimClustering.Rmd
+    └── 4-SkewC_Plot_Typical_Skewed_Coverage.Rmd
 ```
 ## System
 * Linux or MacOSX
@@ -118,22 +120,35 @@ python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i inpu
 ```
 ### 3_SkewC.sh
 ```
-bash 3_SkewC.sh $basename $indir $outdir [$filter]
+bash 3_SkewC.sh $basename $indir $outdir
 ```
 * Arguments:
   * $basename - basename of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
   * $outdir - a directory to store skewc analysis files with index HTML (default='skewc')
-  * $filter -  a list of cellIDs to be removed (Default=none)
-* Run SkewC analysis on all geneBody coverage files under indir.
-* If you want to filter out certain cell.  Prepare a text file with a list of cellIDs.
-* These cellIDs will be removed from SkewC computation.
-* Default is all cells will be computed for SkewC.
-* Example of a list of cell IDs.
+* Run SkewC analysis on all geneBody coverage files under indir
+
+### 4_filter.sh
+```
+bash 4_filter.sh $filter $indir $matchdir $unmatchdir
+```
+* Arguments:
+  * $filter - Filter file with list of IDs
+  * $indir - Input directory (Default=coverage)
+  * $matchdir - match directory with filter list (Default=match)
+  * $unmatchdir - unmatch directory with filter list (Default=unmatch)
+* If you want to filter out certain cell.  Prepare a text file with a list of cellIDs
+* These cellIDs will be removed from SkewC computation
+* Example of a list of cell IDs
 ```
 ERR1211178
 ERR1211176
 ERR1211180
+```
+* After filtering with '4_filter.sh', run '3_SkewC.sh' again with specifying $indir.
+
+```
+bash 4_filter.sh $filter $indir $matchdir $unmatchdir
 ```
 
 ## R Markdown
