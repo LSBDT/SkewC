@@ -6,8 +6,8 @@ use DirHandle;
 use strict;
 use Getopt::Std;
 use Time::localtime;
-use vars qw($opt_o);
-getopts('o:');
+use vars qw($opt_o $opt_p);
+getopts('o:p');
 ############################## help ##############################
 if(scalar(@ARGV)<2){
 	print STDERR "\n";
@@ -20,6 +20,10 @@ if(scalar(@ARGV)<2){
 	print STDERR "  \$outdir     Output directory (default=".")\n";
 	print STDERR "  \$reference  gene model downloaded from RSeQC website\n";
 	print STDERR "  \$skewness   Skewness value\n";
+	print STDERR "\n";
+	print STDERR "Option:\n";
+	print STDERR "     -o  Output directory (default='coverage')\n";
+	print STDERR "     -p  Skip plot command lines in R output\n";
 	print STDERR "\n";
 	print STDERR "Note:\n";
 	print STDERR "  - When directory is specified, BAM/BED files under that directory will be computed\n";
@@ -52,7 +56,7 @@ if(!`which bedtools`){
 ############################## MAIN ##############################
 my @inputfiles=@ARGV;
 my $reference=shift(@inputfiles);
-my $outdir=(defined($opt_o))?$opt_o:".";
+my $outdir=(defined($opt_o))?$opt_o:"coverage";
 mkdir($outdir);
 @inputfiles=expandFiles("\\.(bed|bam)\$",@inputfiles);
 if(checkChrName($inputfiles[0])){$reference=noChrFile($reference);}
@@ -66,7 +70,7 @@ foreach my $inputfile(@inputfiles){
 	my @counts=geneBodyCoverage($indexfile,$inputfile,$reference);
 	if($convertedflag){unlink($inputfile);}
 	outputText($basename,@counts);
-	outputR($basename,@counts);
+	outputR($basename,$opt_p,@counts);
 	my $endTime=time();
 	my $diff=$endTime - $startTime;
 	print "$basename\t".pearsonMomentCoefficient(@counts)."\t".int($diff)." sec\n";
@@ -78,14 +82,14 @@ sub checkChrName{
 	if($inputfile=~/\.bam$/){
 		open(IN,"samtools view -H $inputfile|");
 		while(<IN>){
-			if(/SN:(\S)+/){$hash->{$1}++;}
+			if(/SN:(\S+)/){$hash->{$1}++;}
 		}
 		close(IN);
 	}else{
 		open(IN,$inputfile);
 		while(<IN>){
 			if($_!~/^\@/){last;}
-			if(/SN:(\S)+/){$hash->{$1}++;}
+			if(/SN:(\S+)/){$hash->{$1}++;}
 		}
 		close(IN);
 	}
@@ -142,10 +146,12 @@ sub outputText{
 sub outputR{
 	my @counts=@_;
 	my $basename=shift(@counts);
+	my $nopdf=shift(@counts);
 	my $basename2=$basename;
 	$basename2=~s/[^\w\.]/_/g;
 	open(OUT,">$outdir/$basename.geneBodyCoverage.r");
 	print OUT "$basename2 <- c(".join(",",normalize(@counts)).")\n";
+	if($nopdf){return;}
 	print OUT "\n";
 	print OUT "\n";
 	print OUT "pdf(\"$outdir/$basename.geneBodyCoverage.curves.pdf\")\n";

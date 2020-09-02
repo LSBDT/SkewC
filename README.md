@@ -78,6 +78,8 @@ outs/filtered_feature_bc_matrix/
 * If BAM files are split by cells already, you can skip this step.
 * If you don't mind using "input" as directory name, you can omit $outdir argument.
 * Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
+* RSeQC 'geneBody_coverage.py' required bam files to be indexed, but 'geneBodyCoverage.pl' doesn't need index files.
+* If you are not going to use RSeQC 'geneBody_coverage.py', you can skip this step.
 ### 1_indexBamFiles.sh
 ```
 bash 1_indexBamFiles.sh $indir
@@ -89,6 +91,7 @@ bash 1_indexBamFiles.sh $indir
 * For non10XGenomics data, you can start from here.
 * Create $indir directory and put the BAM files (splitted by cells) there.
 * Index files (file suffix='.bai') will becreated under same directory where BAM files exist.
+* 
 ```
 samtools index BAM
 ```
