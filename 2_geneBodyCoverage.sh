@@ -23,9 +23,12 @@ if [ "$reference" = "hg38" ]; then
   reference="reference/hg38_Gencode_V28.norRNAtRNA.bed"
 elif [ "$reference" = "mm10" ]; then
   reference="reference/mm10_Gencode_VM18.norRNAtRNA.bed"
+elif [[ "$reference" == *.bed ]]; then
+  :
 else
   reference="reference/hg38_Gencode_V28.norRNAtRNA.bed"
 fi
+echo $reference
 workdir=`pwd`;
 if [ -x "$(command -v udocker)" ];then
 udocker run \
