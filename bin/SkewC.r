@@ -16,23 +16,20 @@ alphaValue<-args[4]
 source(coverageFile)
 vars<-ls(pattern=dataName)
 nvars<-length(vars)
-CoverageValues<-list()
-j<-1
-for(i in 1:nvars){
-  if(class(get(vars[i]))=="numeric"){
-    CoverageValues[[j]]<-get(vars[i])
-    names(CoverageValues)[j]<-vars[i]
-    j<-j+1
-  }
-}
 magic_for(silent=TRUE)
-for(h in vars){
-  for(z in 1:100){
-    nam<-paste("pmean",z,sep="")
-    assign(nam,CoverageValues[[h]][z])
-  }
-  put(pmean1,pmean2,pmean3,pmean4,pmean5,pmean6,pmean7,pmean8,pmean9,pmean10,pmean11,pmean12,pmean13,pmean14,pmean15,pmean16,pmean17,pmean18,pmean19,pmean20,pmean21,pmean22,pmean23,pmean24,pmean25,pmean26,pmean27,pmean28,pmean29,pmean30,pmean31,pmean32,pmean33,pmean34,pmean35,pmean36,pmean37,pmean38,pmean39,pmean40,pmean41,pmean42,pmean43,pmean44,pmean45,pmean46,pmean47,pmean48,pmean49,pmean50,pmean51,pmean52,pmean53,pmean54,pmean55,pmean56,pmean57,pmean58,pmean59,pmean60,pmean61,pmean62,pmean63,pmean64,pmean65,pmean66,pmean67,pmean68,pmean69,pmean70,pmean71,pmean72,pmean73,pmean74,pmean75,pmean76,pmean77,pmean78,pmean79,pmean80,pmean81,pmean82,pmean83,pmean84,pmean85,pmean86,pmean87,pmean88,pmean89,pmean90,pmean91,pmean92,pmean93,pmean94,pmean95,pmean96,pmean97,pmean98,pmean99,pmean100)
+for(i in 1:nvars){
+  v<-get(vars[i])
+  if(class(v)=="numeric"){
+    for(z in 1:100){
+      nam<-paste("pmean",z,sep="")
+      assign(nam,v[z])
+    }
+    put(pmean1,pmean2,pmean3,pmean4,pmean5,pmean6,pmean7,pmean8,pmean9,pmean10,pmean11,pmean12,pmean13,pmean14,pmean15,pmean16,pmean17,pmean18,pmean19,pmean20,pmean21,pmean22,pmean23,pmean24,pmean25,pmean26,pmean27,pmean28,pmean29,pmean30,pmean31,pmean32,pmean33,pmean34,pmean35,pmean36,pmean37,pmean38,pmean39,pmean40,pmean41,pmean42,pmean43,pmean44,pmean45,pmean46,pmean47,pmean48,pmean49,pmean50,pmean51,pmean52,pmean53,pmean54,pmean55,pmean56,pmean57,pmean58,pmean59,pmean60,pmean61,pmean62,pmean63,pmean64,pmean65,pmean66,pmean67,pmean68,pmean69,pmean70,pmean71,pmean72,pmean73,pmean74,pmean75,pmean76,pmean77,pmean78,pmean79,pmean80,pmean81,pmean82,pmean83,pmean84,pmean85,pmean86,pmean87,pmean88,pmean89,pmean90,pmean91,pmean92,pmean93,pmean94,pmean95,pmean96,pmean97,pmean98,pmean99,pmean100)
+   }
 }
+rm(pmean1,pmean2,pmean3,pmean4,pmean5,pmean6,pmean7,pmean8,pmean9,pmean10,pmean11,pmean12,pmean13,pmean14,pmean15,pmean16,pmean17,pmean18,pmean19,pmean20,pmean21,pmean22,pmean23,pmean24,pmean25,pmean26,pmean27,pmean28,pmean29,pmean30,pmean31,pmean32,pmean33,pmean34,pmean35,pmean36,pmean37,pmean38,pmean39,pmean40,pmean41,pmean42,pmean43,pmean44,pmean45,pmean46,pmean47,pmean48,pmean49,pmean50,pmean51,pmean52,pmean53,pmean54,pmean55,pmean56,pmean57,pmean58,pmean59,pmean60,pmean61,pmean62,pmean63,pmean64,pmean65,pmean66,pmean67,pmean68,pmean69,pmean70,pmean71,pmean72,pmean73,pmean74,pmean75,pmean76,pmean77,pmean78,pmean79,pmean80,pmean81,pmean82,pmean83,pmean84,pmean85,pmean86,pmean87,pmean88,pmean89,pmean90,pmean91,pmean92,pmean93,pmean94,pmean95,pmean96,pmean97,pmean98,pmean99,pmean100)
+rm(list=vars)
+rm(vars)
 Coverage_DF<-magic_result_as_dataframe()
 names(Coverage_DF)[1]<-"Annotation"
 dfv<-as.character(dataName)
@@ -78,7 +75,6 @@ fullPlot<-fullPlot+geom_line(aes(group=Annotation),size=0.25,col=color)
 fullPlot<-fullPlot+scale_x_discrete(breaks=c("pmean1","pmean20","pmean40","pmean60","pmean80","pmean100"),labels=c("1","20","40","60","80","100"))
 fullPlot<-fullPlot+coord_cartesian(xlim=c(-3,103))
 fullPlot<-fullPlot+labs(x="Gene body percentile(5'->3')")+labs(y="Gene coverage")+labs(title=paste(dataName,"(n=",NROW(Coverage_DF_melted)/100,")"))
-
 fullPlot=fullPlot+theme(plot.title=element_text(face="bold",colour="black",size=20,margin=margin(0,0,3,0)))
 fullPlot=fullPlot+theme(axis.ticks=element_line(colour='black',size=1.2,linetype='dashed'))
 fullPlot=fullPlot+theme(axis.ticks.length=unit(.2,"cm"))
@@ -89,13 +85,13 @@ fullPlot=fullPlot+theme(axis.text=element_text(face="bold",colour="black",size=1
 fullPlot=fullPlot+theme(panel.border=element_rect(colour="black",fill=NA,size=2.2),panel.background=element_rect(fill=NA))
 fullPlot=fullPlot+theme(plot.title=element_text(hjust=0.5))
 fullPlot
+dev.off()
 
 Coverage_means_DF[1:NROW(Coverage_means_DF),1]<-dataName
 Coverage_means_DF<-melt(Coverage_means_DF)
 Coverage_means_DF_tgc<-summarySE(Coverage_means_DF,measurevar="value",groupvars=c("Annotation","variable"))
 pdf(paste(plotDir,"MeanCoverage.pdf",sep="/"))
 meanPlot<-ggplot(Coverage_means_DF_tgc,aes(x=variable,y=value))+geom_errorbar(aes(ymin=value-ci,ymax=value+ci))+geom_line(aes(group=Annotation))
-
 meanPlot=meanPlot+geom_point(aes(group=1),size=2,shape=21,fill="white")+scale_x_discrete(labels=c(10,20,30,40,50,60,70,80,90,100))+labs(x="Mean of the gene body percentile(5'->3')")+labs(y="Gene coverage")+labs(title=paste(dataName,"(n=",NROW(Coverage_DF),")"))
 meanPlot=meanPlot+theme(plot.title=element_text(face="bold",colour="black",size=20,margin=margin(0,0,3,0)))
 meanPlot=meanPlot+theme(axis.ticks=element_line(colour='black',size=1.2,linetype='dashed'))

@@ -37,6 +37,7 @@ udocker run \
   $outdir
 elif [ -x "$(command -v docker)" ]; then
 docker run \
+  --memory 2G \
   -it \
   --rm \
   -v $workdir:/root/work \

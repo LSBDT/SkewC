@@ -123,13 +123,14 @@ python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i inpu
 ```
 ### 3_SkewC.sh
 ```
-bash 3_SkewC.sh $basename $indir $outdir
+bash 3_SkewC.sh $prjname $indir $outdir
 ```
 * Arguments:
-  * $basename - basename of sample (default='COV')
+  * $prjname - project name of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
   * $outdir - a directory to store skewc analysis files with index HTML (default='skewc')
 * Run SkewC analysis on all geneBody coverage files under indir
+* $prjname will be printed on PDF outputs.
 
 ### 4_filter.sh
 ```
