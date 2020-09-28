@@ -17,8 +17,8 @@ source(coverageFile)
 vars<-ls(pattern=dataName)
 nvars<-length(vars)
 magic_for(silent=TRUE)
-for(i in 1:nvars){
-  v<-get(vars[i])
+for(h in vars){
+  v<-get(h)
   if(class(v)=="numeric"){
     for(z in 1:100){
       nam<-paste("pmean",z,sep="")

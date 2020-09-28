@@ -12,7 +12,7 @@ while(<IN>){
 	my $total=0;
 	foreach my $token(@tokens){$total+=$token;}
 	$totals->{$total}++;
-	print "$_\t$total\n";
+	#print "$_\t$total\n";
 	$size++;
 }
 close(IN);
