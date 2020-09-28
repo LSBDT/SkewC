@@ -171,3 +171,7 @@ To run this,
 
 4-SkewC_Plot_Typical_Skewed_Coverage.Rmd
   This R Markdown will plot the gene body coverage of the Typical and Skewed cells.
+
+## Updates
+
+2020/09/28 - Fixed a bug where TypicalCellsID.tsv and SkewedCellsID.tsv are written in index instead of IDs.
