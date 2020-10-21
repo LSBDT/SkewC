@@ -1,7 +1,8 @@
 ---
 title:  "SkewC_Create_Coverage_Matrix"
 author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical Data Technology - RIKEN-IMS"
-date:    "April 06, 2020"
+date:    "October 13, 2020"
+SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10 cells}
 ---
 
 ```{r echo=FALSE}
@@ -11,16 +12,16 @@ options(width=100)
 
 ## Skewc
 
-This is an R Markdown document to create the required coverage matrix. The input is the vector of the normalized values from the genebody coverge script.
+This is an R Markdown document to create the required coverage matrix. The input is the vector of the normalized values from the genebody coverge script. 
 
-```{r load required libraries2}
+```{r load required libraries}
 library(tclust)
 ## Enter the initial value for alpha (outliter triming)
 ## Alpha range between [0..1]
 Alpha_ini <- readline(prompt = "What is Alpha?")
 ```
 
-##
+## 
 
 ##
 ```{r apply trim clustering}
@@ -108,3 +109,4 @@ write.table(
     as.data.frame(Skewed_coverage_cellID$Annotation)
     names(Skewed_coverage_cellIDDF)[1] <- "V1"
 ```
+

@@ -12,7 +12,6 @@ while(<IN>){
 	my $total=0;
 	foreach my $token(@tokens){$total+=$token;}
 	$totals->{$total}++;
-	#print "$_\t$total\n";
 	$size++;
 }
 close(IN);
@@ -27,7 +26,6 @@ foreach my $length(@lengths){
 	if(!defined($lowerThreshold)&&$index>$lowerCount){$lowerThreshold="$length";}
 	if(!defined($upperThreshold)&&$index>$upperCount){$upperThreshold="$length";}
 }
-#foreach my $length(@lengths){print STDERR "$length\t".$totals->{$length}."\n";}
 print STDERR "Total of $size genes\n";
 print STDERR "Reaches $lowerCount genes at exon length $lowerThreshold\n";
 print STDERR "Reaches $upperCount genes at exon length $upperThreshold\n";
