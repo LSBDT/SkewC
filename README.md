@@ -22,7 +22,7 @@ hdrgenome/
 │   └── workers.pl
 ├── example/
 │   ├── barcodes.tsv.gz
-    ├── coverage.r - sample data for SkewC Rmarkdown
+│   ├── coverage.r - sample data for SkewC Rmarkdown
 │   └── example.bam
 ├── LICENSE
 ├── README.md
