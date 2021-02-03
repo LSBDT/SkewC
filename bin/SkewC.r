@@ -53,15 +53,38 @@ Coverage_means_DF$pmeanAve90<-rowMeans(Coverage_means_DF[c(p90)],na.rm=TRUE)
 Coverage_means_DF$pmeanAve100<-rowMeans(Coverage_means_DF[c(p100)],na.rm=TRUE)
 Coverage_means_DF<-Coverage_means_DF[,-c(1:100)]
 Coverage_means_DF_Clust<-Coverage_means_DF
-
-### SkewC_Plot_Gene_Body_Coverage.Rmd ###
-
+Coverage_means_DF_Clust_Annotation<-Coverage_means_DF_Clust
+Coverage_means_DF_Clust$Annotation<-NULL
+### alphaValue ###
 knitr::opts_chunk$set(echo=TRUE)
 if(!file.exists(plotDir)){dir.create(plotDir)}
 plotDir<-paste(plotDir,dataName,sep="/")
 if(!file.exists(plotDir)){dir.create(plotDir)}
-plotDir<-paste(plotDir,alphaValue,sep="/")
-if(!file.exists(plotDir)){dir.create(plotDir)}
+if(is.na(alphaValue)){
+  alphaRange<-seq(0,0.3,by=0.005)
+  data<-ctlcurves(Coverage_means_DF_Clust,k=1,alpha=alphaRange)
+  table<-data$obj
+  size<-length(alphaRange)
+  highestTable=0
+  for(i in 1:size){
+    if(is.infinite(table[i])){data$obj[i]=0}
+    if(table[i]>highestTable){
+      alphaValue<-alphaRange[i]
+      highestTable<-table[i]
+    }
+  }
+  plotDir<-paste(plotDir,alphaValue,sep="/")
+  if(!file.exists(plotDir)){dir.create(plotDir)}
+  pdf(paste(plotDir,paste("ctlcurves.pdf"),sep="/"))
+  plot(data)
+  dev.off()
+}else{
+  alphaValue<-as.numeric(alphaValue)
+  plotDir<-paste(plotDir,alphaValue,sep="/")
+  if(!file.exists(plotDir)){dir.create(plotDir)}
+}
+### SkewC_Plot_Gene_Body_Coverage.Rmd ###
+knitr::opts_knit$set(verbose=TRUE)
 Coverage_DF_melted<-melt(Coverage_DF)
 pdf(paste(plotDir,"FullCoverage.pdf",sep="/"))
 color=rgb(0,0,0,alpha=0.25)
@@ -99,18 +122,14 @@ meanPlot=meanPlot+theme(panel.border=element_rect(colour="black",fill=NA,size=2.
 meanPlot=meanPlot+theme(plot.title=element_text(hjust=0.5))
 meanPlot
 dev.off()
-
 ### SkewC_TrimClustering.Rmd ###
-
 knitr::opts_knit$set(verbose=TRUE)
 options(width=100)
-Coverage_means_DF_Clust_Annotation<-Coverage_means_DF_Clust
-Coverage_means_DF_Clust$Annotation<-NULL
 trimClust<-function(x) {
   clus<-tclust (
     Coverage_means_DF_Clust,
     k=1,
-    alpha=as.numeric(alphaValue),
+    alpha=alphaValue,
     restr.fact=1,
     restr="eigen",
     equal.weights=TRUE
@@ -122,7 +141,8 @@ trimClustResult<-trimClust(x)
 pdf(paste(plotDir,"CLUSTResult.pdf",sep="/"))
 plot(
 trimClustResult,
-main=list(paste(dataName,"(n=",NROW(Coverage_DF),")","\n","cells clustering by gene body coverage")),
+main=list(paste(dataName,"(n=",NROW(Coverage_DF),") alpha=",
+      alphaValue,"\n","cells clustering by gene body coverage")),
 cex=1.5,
 #col="black",
 font=2
@@ -197,7 +217,8 @@ Coverage_DF_meltedTypicalCells <-
       NROW(Coverage_DF_meltedTypicalCells)/100,
       ":",
       NROW(Coverage_DF_melted)/100,
-      ")"
+      ") alpha=",
+      alphaValue
       ))
 fullPlotTypical=fullPlotTypical+theme(plot.title=element_text(face="bold",colour="black",size=20,margin=margin(0,0,3,0)))
 fullPlotTypical=fullPlotTypical+theme(axis.ticks=element_line(colour='black',size=1.2,linetype='dashed'))
@@ -228,7 +249,8 @@ fullPlotSkewed<-fullPlotSkewed+labs(x= "Mean of the gene body percentile (5'-> 3
     NROW(Coverage_DF_meltedSkewedCells)/100,
     ":",
     NROW(Coverage_DF_melted)/100,
-    ")"
+    ") alpha=",
+      alphaValue
   ))
 fullPlotSkewed=fullPlotSkewed+theme(plot.title=element_text(face="bold",colour="black",size=20,margin=margin(0,0,3,0)))
 fullPlotSkewed=fullPlotSkewed+theme(axis.ticks=element_line(colour='black',size=1.2,linetype='dashed'))

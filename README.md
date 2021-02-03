@@ -14,6 +14,7 @@ hdrgenome/
 │   ├── filter.pl
 │   ├── geneBodyCoverage.pl
 │   ├── indexBamFiles.pl
+│   ├── plot.r
 │   ├── showGencodeGeneLengths.pl
 │   ├── SkewC.pl
 │   ├── SkewC.r
@@ -123,14 +124,21 @@ python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i inpu
 ```
 ### 3_SkewC.sh
 ```
-bash 3_SkewC.sh $prjname $indir $outdir
+bash 3_SkewC.sh $prjname $indir $outdir $alpha
 ```
 * Arguments:
   * $prjname - project name of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
   * $outdir - a directory to store skewc analysis files with index HTML (default='skewc')
+  * $alpha - alpha for tclust computation with three modes:
+    * 0.0 - 1.0 - tclust will be computed with this user specified value.
+    * "auto" - alpha value is decided by highest value from ctlcurves.
+    * (Not defined) -  multiple tclust computation range from alpha vlaue 0.05 - 0.95 with interval 0.05.
 * Run SkewC analysis on all geneBody coverage files under indir
 * $prjname will be printed on PDF outputs.
+* References:
+  * tclust: https://www.rdocumentation.org/packages/tclust/versions/1.4-2/topics/tclust
+  * ctlcurves: https://www.rdocumentation.org/packages/tclust/versions/1.4-1/topics/ctlcurves
 ### 4_filter.sh
 ```
 bash 4_filter.sh $filter $indir $matchdir $unmatchdir
@@ -169,7 +177,7 @@ To run this,
 * To get reference bed file from http://genome.ucsc.edu/cgi-bin/hgTables
   - clade: Mammal
   - genome: Human
-  - assembly: Dec. 2013 (GRCh38/hg38(
+  - assembly: Dec. 2013 (GRCh38/hg38)
   - group: Genes and Gene Predictions
   - track: ALL GENCODE V34
   - table: Basic (wgEncodeGencodeBasicV34)
@@ -188,5 +196,6 @@ intersectBed -split -v -s -wa -a mm10_Gencode_VM25.bed -b mm10_rRNA_tRNA.bed > m
 intersectBed -split -v -s -wa -a hg38_Gencode_V34.bed -b hg38_rRNA_tRNA.bed > hg38_Gencode_V34.norRNAtRNA.bed
 ```
 ## Updates
+* 2021/01/28 - Added ctlcurves for automatically setting up alpha value.
 * 2020/10/20 - Stopped using 'magicfor' to create list, since used up memory and couldn't process library with >1000 cells.
 * 2020/09/28 - Fixed a bug where TypicalCellsID.tsv and SkewedCellsID.tsv are written in index instead of IDs.

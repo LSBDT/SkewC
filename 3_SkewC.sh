@@ -13,6 +13,7 @@ fi
 basename=$1
 indir=$2
 outdir=$3
+alpha=$4
 if [ -z "$basename" ]; then
 basename="COV"
 fi
@@ -34,7 +35,8 @@ udocker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir
+  $outdir \
+  $alpha
 elif [ -x "$(command -v docker)" ]; then
 docker run \
   --memory 2G \
@@ -46,7 +48,8 @@ docker run \
   perl bin/SkewC.pl \
   $basename \
   $indir \
-  $outdir
+  $outdir \
+  $alpha
 else
   echo "Please install udocker or docker"
 fi
