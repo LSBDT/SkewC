@@ -1,19 +1,19 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./3_SkewC.sh \$prjname \$indir \$outdir \$filter"
+  echo "Usage: ./3_SkewC.sh \$prjname \$indir \$outdir \$alpha"
   echo ""
   echo " \$prjname   name of the project (Default=COV)"
   echo "   \$indir   directory where coverage files are stored (Default=coverage)"
   echo "  \$outdir   directory where results files will be output (Default=skewc)"
-  echo "  \$filter   a list of cellIDs to be removed (Default=none)"
+  echo "  \$alpha    alpha value to be used for computation of tclust (Default=auto)"
   echo ""
   exit
 fi
-basename=$1
-indir=$2
-outdir=$3
-alpha=$4
+basename=$1;shift
+indir=$1;shift
+outdir=$1;shift
+alpha=$@
 if [ -z "$basename" ]; then
 basename="COV"
 fi

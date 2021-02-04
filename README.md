@@ -5,10 +5,9 @@ The method relies on the measure of skewness of the gene coverage of each single
 ```
 hdrgenome/
 ├── 0_split10XbyBarcode.sh
-├── 1_indexBamFiles.sh
-├── 2_geneBodyCoverage.sh
-├── 3_SkewC.sh
-├── 4_filter.sh
+├── 1_geneBodyCoverage.sh
+├── 2_SkewC.sh
+├── 3_filter.sh
 ├── bash.sh
 ├── bin/
 │   ├── filter.pl
@@ -55,8 +54,8 @@ git clone https://github.com/LSBDT/SkewC.git
 cd SkewC/
 bash 0_split10XbyBarcode.sh example/example.bam example/barcodes.tsv.gz
 bash 1_indexBamFiles.sh
-bash 2_geneBodyCoverage.sh
-bash 3_SkewC.sh
+bash 1_geneBodyCoverage.sh
+bash 2_SkewC.sh
 ```
 * Final HTML output will be stored under a directory skewc/
 ### 0_split10XbyBarcode.sh
@@ -81,24 +80,9 @@ outs/filtered_feature_bc_matrix/
 * Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
 * RSeQC 'geneBody_coverage.py' required bam files to be indexed, but 'geneBodyCoverage.pl' doesn't need index files.
 * If you are not going to use RSeQC 'geneBody_coverage.py', you can skip this step.
-### 1_indexBamFiles.sh
+### 1_geneBodyCoverage.sh
 ```
-bash 1_indexBamFiles.sh $indir
-```
-* Arguments:
-  * $indir - directory where split BAM files are stored (default='input')
-* Runs "samtools index" on all BAM files under $indir directory.
-* If you want, it's ok to run samtools index command through command line.
-* For non10XGenomics data, you can start from here.
-* Create $indir directory and put the BAM files (splitted by cells) there.
-* Index files (file suffix='.bai') will becreated under same directory where BAM files exist.
-* 
-```
-samtools index BAM
-```
-### 2_geneBodyCoverage.sh
-```
-bash 2_geneBodyCoverage.sh $species $indir $outdir
+bash 1_geneBodyCoverage.sh $species $indir $outdir
 ```
 * Arguments:
   * $species - human 'hg38' or mouse 'mm10' (default='hg38')
@@ -122,26 +106,29 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 ```
 python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i input/example.TTTGTCATCTAACGGT-1.bam  -o coverage > log.txt
 ```
-### 3_SkewC.sh
+### 2_SkewC.sh
 ```
-bash 3_SkewC.sh $prjname $indir $outdir $alpha
+bash 2_SkewC.sh $prjname $indir $outdir $alpha
 ```
 * Arguments:
   * $prjname - project name of sample (default='COV')
   * $indir  - a directory where geneBodyCoverage.pl output files are stored (default='coverage')
   * $outdir - a directory to store skewc analysis files with index HTML (default='skewc')
   * $alpha - alpha for tclust computation with three modes:
+    * (Not defined) - alpha value is decided by highest value from ctlcurves.
     * 0.0 - 1.0 - tclust will be computed with this user specified value.
-    * "auto" - alpha value is decided by highest value from ctlcurves.
-    * (Not defined) -  multiple tclust computation range from alpha vlaue 0.05 - 0.95 with interval 0.05.
+* Example:
+   * bash 2_SkewC.sh test input output - tclust computation with auto alpha value
+   * bash 2_SkewC.sh test input output 0.1 - tclust computation with alpha=0.1
+   * bash 2_SkewC.sh test input output 0.1 0.2 0.3 0.4  - tclust computation with alpha=0.1, 0.2, 0.3, 0.4
 * Run SkewC analysis on all geneBody coverage files under indir
 * $prjname will be printed on PDF outputs.
 * References:
   * tclust: https://www.rdocumentation.org/packages/tclust/versions/1.4-2/topics/tclust
   * ctlcurves: https://www.rdocumentation.org/packages/tclust/versions/1.4-1/topics/ctlcurves
-### 4_filter.sh
+### 3_filter.sh
 ```
-bash 4_filter.sh $filter $indir $matchdir $unmatchdir
+bash 3_filter.sh $filter $indir $matchdir $unmatchdir
 ```
 * Arguments:
   * $filter - Filter file with list of IDs
@@ -156,9 +143,9 @@ ERR1211178
 ERR1211176
 ERR1211180
 ```
-* After filtering with '4_filter.sh', run '3_SkewC.sh' again with specifying $indir.
+* After filtering with '3_filter.sh', run '2_SkewC.sh' again with specifying $indir.
 ```
-bash 4_filter.sh $filter $indir $matchdir $unmatchdir
+bash 3_filter.sh $filter $indir $matchdir $unmatchdir
 ```
 ## R Markdown
 1-SkewC_Create_Coverage_Matrixes.Rmd

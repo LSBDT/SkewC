@@ -8,10 +8,10 @@ use vars qw($opt_s $opt_e $opt_d);
 getopts('e:s:d:');
 my ($prgname,$prgdir,$prgsuffix)=fileparse($0);
 if(scalar(@ARGV)<3){print STDERR "perl SkewC.pl BASENAME INDIR OUTDIR ALPHA\n";exit(0);}
-my $basename=$ARGV[0];
-my $indir=$ARGV[1];
-my $outdir=$ARGV[2];
-my $alphaValue=$ARGV[3];
+my @alphaValues=@ARGV;
+my $basename=shift(@alphaValues);
+my $indir=shift(@alphaValues);
+my $outdir=shift(@alphaValues);
 my $start=defined($opt_s)?$opt_s:0.05;
 my $end=defined($opt_e)?$opt_e:1.00;
 my $step=defined($opt_d)?$opt_d:0.05;
@@ -33,15 +33,11 @@ foreach my $file(@files){
 	close(IN);
 }
 close($fh);
-if(defined($alphaValue)){
-	if($alphaValue eq "auto"){
-		system("Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename\n");
-	}else{
-		system("Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename $alphaValue\n");
-	}
+if(scalar(@alphaValues)==0){
+	print STDERR "Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename\n";
+	system("Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename\n");
 }else{
-	for(my $alpha=$start;$alpha<$end;$alpha+=$step){
-		$alpha=sprintf("%.3f",$alpha);
+	foreach my $alpha(@alphaValues){
 		print STDERR "Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename $alpha\n";
 		system("Rscript --vanilla ${prgdir}SkewC.r $tmpfile $outdir $basename $alpha\n");
 	}
@@ -74,7 +70,12 @@ foreach my $dir(@alphaValues){
 	my $skewFile="$dir/SkewedCellsID.tsv";
 	my $typicalCount=`wc -l<$outdir/$basename/$typicalFile`;
 	my $skewCount=`wc -l<$outdir/$basename/$skewFile`;
-	print OUT "<tr><th><b>$dir</b></th>\n";
+	my $curveFile="$dir/ctlcurves.pdf";
+	if(-e "$outdir/$basename/$curveFile"){
+		print OUT "<tr><th><font color='red'><big><b>$dir<br><a href=\"$curveFile\"><embed src=\"$curveFile\" width=150 height=150></a><br>auto</b></big></font></th>\n";
+	}else{
+		print OUT "<tr><th><b>$dir</b></th>\n";
+	}
 	print OUT "<td><a href=\"$dir/CLUSTResult.pdf\"><embed src=\"$dir/CLUSTResult.pdf\" width=300 height=300></a></td>\n";
 	print OUT "<td><a href=\"$dir/TypicalcellFullCoverage.pdf\"><embed src=\"$dir/TypicalcellFullCoverage.pdf\" width=300 height=300></a></td>\n";
 	print OUT "<td><a href=\"$dir/SkewedcellFullCoverage.pdf\"><embed src=\"$dir/SkewedcellFullCoverage.pdf\" width=300 height=300></a></td>\n";
