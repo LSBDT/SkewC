@@ -12,13 +12,9 @@ hdrgenome/
 ├── bin/
 │   ├── filter.pl
 │   ├── geneBodyCoverage.pl
-│   ├── indexBamFiles.pl
-│   ├── plot.r
-│   ├── showGencodeGeneLengths.pl
 │   ├── SkewC.pl
 │   ├── SkewC.r
 │   ├── split10XbyBarcode.pl
-│   ├── splitGencodeIntoThreeLenghts.pl
 │   └── workers.pl
 ├── example/
 │   ├── barcodes.tsv.gz
