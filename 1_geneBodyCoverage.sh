@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./2_geneBodyCoverage.sh \$species \$indir \$outdir"
+  echo "Usage: ./1_geneBodyCoverage.sh \$species \$indir \$outdir"
   echo ""
   echo "  \$species  mm10 [mouse] or hg38 [human]"
   echo "  \$indir    directory where BAM files and BAI files are stored (Default=input)"
@@ -9,6 +9,8 @@ if [ $# -lt 0 ]; then
   echo ""
   exit
 fi
+image=moirai2/skewc
+sif=skewc.sif
 reference=$1
 indir=$2
 outdir=$3
@@ -30,13 +32,10 @@ else
 fi
 echo $reference
 workdir=`pwd`;
-if [ -x "$(command -v udocker)" ];then
-udocker run \
-  --rm \
-  --user=root \
-  --volume=$workdir:/root/work \
-  --workdir=/root/work \
-  moirai2/skewc \
+if [ -x "$(command -v singularity)" ]; then
+singularity exec \
+  --bind $PWD \
+  $sif \
   perl bin/workers.pl \
   -r \
   $indir \
@@ -48,13 +47,25 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc \
+  $image \
+  perl bin/workers.pl \
+  -r \
+  $indir \
+  $outdir \
+  "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log"
+elif [ -x "$(command -v udocker)" ];then
+udocker run \
+  --rm \
+  --user=root \
+  --volume=$workdir:/root/work \
+  --workdir=/root/work \
+  $image \
   perl bin/workers.pl \
   -r \
   $indir \
   $outdir \
   "perl bin/geneBodyCoverage.pl -o $outdir $reference \$in.bam > \$out.log"
 else
-  echo "Please install udocker or docker"
+  echo "Please install docker, singularity, or udocker"
 fi
 rmdir workers

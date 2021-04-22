@@ -3,6 +3,7 @@ use strict 'vars';
 use File::Basename;
 use Getopt::Std;
 use IO::File;
+use File::Temp qw/ tempfile tempdir /;
 use vars qw($opt_l $opt_o $opt_r $opt_t);
 getopts('l:o:r:t:');
 if(scalar(@ARGV)==0){print STDERR "perl split10XbyBarcode.pl -o OUTDIR BAM BARCODE\n";exit(0);}
@@ -11,11 +12,11 @@ my $barcode=$ARGV[1];
 my $length=(defined($opt_l))?$opt_l:3;
 my $outdir=(defined($opt_o))?$opt_o:"split";
 my $regexp=(defined($opt_r))?$opt_r:"CB:Z:(\\S+)";
-my $tmpdir=(defined($opt_t))?$opt_t:"tmp";
+my $tmpdir;
+if(defined($opt_t)){$tmpdir=$opt_t;mkdir($tmpdir);}
+else{$tmpdir=tempdir(CLEANUP=>1);}
 mkdir($outdir);
-mkdir($tmpdir);
 chmod(0777,$outdir);
-chmod(0777,$tmpdir);
 print("#1 Reading barcode file...\n");
 my $barcodes={};
 if($barcode=~/\.gz(ip)?$/){open(IN,"gzip -cd $barcode|");}

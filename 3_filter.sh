@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 1 ]; then
   echo ""
-  echo "Usage: ./4_filter.sh \$filter \$indir \$matchdir \$unmatchdir"
+  echo "Usage: ./3_filter.sh \$filter \$indir \$matchdir \$unmatchdir"
   echo ""
   echo "    \$filter   Filter file (Default=coverage)"
   echo "     \$indir   Input directory (Default=coverage)"
@@ -10,6 +10,8 @@ if [ $# -lt 1 ]; then
   echo ""
   exit
 fi
+image=moirai2/skewc
+sif=skewc.sif
 filter=$1
 indir=$2
 match=$3
@@ -26,13 +28,10 @@ fi
 mkdir -p $match
 mkdir -p $unmatch
 workdir=`pwd`;
-if [ -x "$(command -v udocker)" ];then
-udocker run \
-  --rm \
-  --user=root \
-  --volume=$workdir:/root/work \
-  --workdir=/root/work \
-  moirai2/skewc \
+if [ -x "$(command -v singularity)" ]; then
+singularity exec \
+  --bind $PWD \
+  $sif \
   perl bin/filter.pl \
   $filter \
   $indir \
@@ -44,7 +43,19 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc \
+  $image \
+  perl bin/filter.pl \
+  $filter \
+  $indir \
+  $match \
+  $unmatch
+elif [ -x "$(command -v udocker)" ];then
+udocker run \
+  --rm \
+  --user=root \
+  --volume=$workdir:/root/work \
+  --workdir=/root/work \
+  $image \
   perl bin/filter.pl \
   $filter \
   $indir \

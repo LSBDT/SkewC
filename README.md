@@ -12,6 +12,7 @@ hdrgenome/
 ├── bin/
 │   ├── filter.pl
 │   ├── geneBodyCoverage.pl
+│   ├── geneLength.pl
 │   ├── SkewC.pl
 │   ├── SkewC.r
 │   ├── split10XbyBarcode.pl
@@ -38,8 +39,10 @@ hdrgenome/
 * *docker* (https://www.docker.com) or *udocker* (https://github.com/indigo-dc/udocker)
 * If you are installing to your personal computer and have admin authority, install docker.
 * Install udocker, if you want to run pipeline in Linux environment where you don't have any admin authority (and can't run docker).
+* *singularity* (https://singularity.lbl.gov)
+* Install singularity is currently more recommended than installing udocker.  There is an additional step to convert docker to singularity image file (SIF), but singularity is very well updated.
 ## Install
-* After you install git and docker/udocker.
+* After you install git and docker/udocker/singularity.
 ```
 git clone https://github.com/LSBDT/SkewC.git
 ```
@@ -49,11 +52,11 @@ git clone https://github.com/LSBDT/SkewC.git
 ```
 cd SkewC/
 bash 0_split10XbyBarcode.sh example/example.bam example/barcodes.tsv.gz
-bash 1_indexBamFiles.sh
 bash 1_geneBodyCoverage.sh
 bash 2_SkewC.sh
 ```
 * Final HTML output will be stored under a directory skewc/
+
 ### 0_split10XbyBarcode.sh
 ```
 bash 0_split10XbyBarcode.sh $bam $barcode $outdir
@@ -76,6 +79,7 @@ outs/filtered_feature_bc_matrix/
 * Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
 * RSeQC 'geneBody_coverage.py' required bam files to be indexed, but 'geneBodyCoverage.pl' doesn't need index files.
 * If you are not going to use RSeQC 'geneBody_coverage.py', you can skip this step.
+
 ### 1_geneBodyCoverage.sh
 ```
 bash 1_geneBodyCoverage.sh $species $indir $outdir
@@ -102,6 +106,7 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 ```
 python geneBody_coverage.py -r reference/hg38_Gencode_V28.norRNAtRNA.bed -i input/example.TTTGTCATCTAACGGT-1.bam  -o coverage > log.txt
 ```
+
 ### 2_SkewC.sh
 ```
 bash 2_SkewC.sh $prjname $indir $outdir $alpha
@@ -122,6 +127,7 @@ bash 2_SkewC.sh $prjname $indir $outdir $alpha
 * References:
   * tclust: https://www.rdocumentation.org/packages/tclust/versions/1.4-2/topics/tclust
   * ctlcurves: https://www.rdocumentation.org/packages/tclust/versions/1.4-1/topics/ctlcurves
+
 ### 3_filter.sh
 ```
 bash 3_filter.sh $filter $indir $matchdir $unmatchdir
@@ -143,6 +149,7 @@ ERR1211180
 ```
 bash 3_filter.sh $filter $indir $matchdir $unmatchdir
 ```
+
 ## R Markdown
 1-SkewC_Create_Coverage_Matrixes.Rmd
 To run this,
@@ -156,6 +163,7 @@ To run this,
    Also it will generate a plot with the clustering result (PDF)
 4-SkewC_Plot_Typical_Skewed_Coverage.Rmd
   This R Markdown will plot the gene body coverage of the Typical and Skewed cells.
+
 ## References
 * To get reference bed file from http://genome.ucsc.edu/cgi-bin/hgTables
   - clade: Mammal
@@ -178,7 +186,30 @@ To run this,
 intersectBed -split -v -s -wa -a mm10_Gencode_VM25.bed -b mm10_rRNA_tRNA.bed > mm10_Gencode_VM25.norRNAtRNA.bed
 intersectBed -split -v -s -wa -a hg38_Gencode_V34.bed -b hg38_rRNA_tRNA.bed > hg38_Gencode_V34.norRNAtRNA.bed
 ```
+
+## Utilities
+### geneLength.pl
+* Separate gencode bed file into three lengths.
+* This scripts takes 1/3 and 2/3 of gene lengths.
+* For example, hg38_Gencode_V28.norRNAtRNA.bed will create
+  - hg38_Gencode_V28.norRNAtRNA.1.bed (0/3-1/3)
+  - hg38_Gencode_V28.norRNAtRNA.2.bed (1/3-2/3)
+  - hg38_Gencode_V28.norRNAtRNA.3.bed (2/3-3/3)
+```
+perl geneLength.pl BED
+BED hg38_Gencode_V28.norRNAtRNA.bed or mm10_Gencode_VM18.norRNAtRNA.bed.
+```
+## Singularity
+### Building SIF
+* To build singularity image file (SIF) from docker image stored in docker hub, please use this command.
+```
+cd SkewC
+singularity build skewc.sif docker://moirai2/skewc:latest
+```
+* Make sure you place the built SIF file on the work directory of SkewC.
 ## Updates
+* 2021/04/22 - Modified script to use singularity, docker, or udocker.
+* 2021/04/20 - Added geneLength.pl for splitting genes into three length sets.
 * 2021/01/28 - Added ctlcurves for automatically setting up alpha value.
 * 2020/10/20 - Stopped using 'magicfor' to create list, since used up memory and couldn't process library with >1000 cells.
 * 2020/09/28 - Fixed a bug where TypicalCellsID.tsv and SkewedCellsID.tsv are written in index instead of IDs.

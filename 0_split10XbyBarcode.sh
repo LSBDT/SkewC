@@ -9,6 +9,8 @@ if [ $# -lt 2 ]; then
   echo ""
   exit
 fi
+image=moirai2/skewc
+sif=skewc.sif
 bam=$1
 barcode=$2
 outdir=$3
@@ -17,13 +19,10 @@ outdir="input"
 fi
 mkdir -p $outdir
 workdir=`pwd`;
-if [ -x "$(command -v udocker)" ];then
-udocker run \
-  --rm \
-  --user=root \
-  --volume=$workdir:/root/work \
-  --workdir=/root/work \
-  moirai2/skewc \
+if [ -x "$(command -v singularity)" ]; then
+singularity exec \
+  --bind $PWD \
+  $sif \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \
@@ -34,7 +33,18 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc \
+  $image \
+  perl bin/split10XbyBarcode.pl \
+  -o $outdir \
+  $bam \
+  $barcode
+elif [ -x "$(command -v udocker)" ];then
+udocker run \
+  --rm \
+  --user=root \
+  --volume=$workdir:/root/work \
+  --workdir=/root/work \
+  $image \
   perl bin/split10XbyBarcode.pl \
   -o $outdir \
   $bam \

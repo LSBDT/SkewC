@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 0 ]; then
   echo ""
-  echo "Usage: ./3_SkewC.sh \$prjname \$indir \$outdir \$alpha"
+  echo "Usage: ./2_SkewC.sh \$prjname \$indir \$outdir \$alpha"
   echo ""
   echo " \$prjname   name of the project (Default=COV)"
   echo "   \$indir   directory where coverage files are stored (Default=coverage)"
@@ -10,6 +10,8 @@ if [ $# -lt 0 ]; then
   echo ""
   exit
 fi
+image=moirai2/skewc
+sif=skewc.sif
 basename=$1;shift
 indir=$1;shift
 outdir=$1;shift
@@ -25,13 +27,10 @@ outdir="skewc"
 fi
 mkdir -p $outdir
 workdir=`pwd`;
-if [ -x "$(command -v udocker)" ];then
-udocker run \
-  --rm \
-  --user=root \
-  --volume=$workdir:/root/work \
-  --workdir=/root/work \
-  moirai2/skewc \
+if [ -x "$(command -v singularity)" ]; then
+singularity exec \
+  --bind $PWD
+  $sif \
   perl bin/SkewC.pl \
   $basename \
   $indir \
@@ -44,7 +43,19 @@ docker run \
   --rm \
   -v $workdir:/root/work \
   --workdir /root/work \
-  moirai2/skewc \
+  $image \
+  perl bin/SkewC.pl \
+  $basename \
+  $indir \
+  $outdir \
+  $alpha
+elif [ -x "$(command -v udocker)" ];then
+udocker run \
+  --rm \
+  --user=root \
+  --volume=$workdir:/root/work \
+  --workdir=/root/work \
+  $image \
   perl bin/SkewC.pl \
   $basename \
   $indir \
