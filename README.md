@@ -207,7 +207,11 @@ cd SkewC
 singularity build skewc.sif docker://moirai2/skewc:latest
 ```
 * Make sure you place the built SIF file on the work directory of SkewC.
+## More fine gene lengths
+* Split long genes 
+
 ## Updates
+* 2021/05/06 - More refined geneLength analysis.
 * 2021/04/22 - Modified script to use singularity, docker, or udocker.
 * 2021/04/20 - Added geneLength.pl for splitting genes into three length sets.
 * 2021/01/28 - Added ctlcurves for automatically setting up alpha value.
