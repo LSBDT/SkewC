@@ -16,6 +16,7 @@ hdrgenome/
 │   ├── SkewC.pl
 │   ├── SkewC.r
 │   ├── split10XbyBarcode.pl
+│   ├── splitByGeneLength.pl
 │   └── workers.pl
 ├── example/
 │   ├── barcodes.tsv.gz
@@ -96,6 +97,10 @@ perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.b
 * 'geneBodyCoverage.pl' was written to reduce running time of geneBodyCoverage step by about 10 folds.
 * Although same algorithm is used, output from geneBodyCoverage.pl and geneBody_coverage.py differs a bit, but it's negligible.
 * 'geneBodyCoverage.pl' will create an index file under a reference directory (default='reference') at the beginning of first iteration.  From second iteration on, indexed reference file will be used to speed up calculation.   Don't run geneBodyCoverage.pl in parallel (at the same time) when it's creating an index file.
+* Indexing reference files take about 5-10 minutes.
+* File size of index files are:
+  * mm10 9MB bed file => 60MB index file
+  * hg38 13MB bed file => 82MB index file
 * Reference column of BAM file from 10XGenomics, chromosome are represented without "chr".  For chr1 example, reference column of normal BAM file is written "chr1", but in 10XGenomics, it's written "1" only.
 * 'geneBodyCoverage.pl' will automatically detect the difference in reference column and create an index reference file with/without 'chr'.
 * Three files will be created under outdir (default='coverage')
@@ -188,17 +193,65 @@ intersectBed -split -v -s -wa -a hg38_Gencode_V34.bed -b hg38_rRNA_tRNA.bed > hg
 ```
 
 ## Utilities
+* A collection of scripts for farther analysis.
 ### geneLength.pl
-* Separate gencode bed file into three lengths.
-* This scripts takes 1/3 and 2/3 of gene lengths.
-* For example, hg38_Gencode_V28.norRNAtRNA.bed will create
-  - hg38_Gencode_V28.norRNAtRNA.1.bed (0/3-1/3)
-  - hg38_Gencode_V28.norRNAtRNA.2.bed (1/3-2/3)
-  - hg38_Gencode_V28.norRNAtRNA.3.bed (2/3-3/3)
+* Simply print out gene length of a BED file.
 ```
-perl geneLength.pl BED
-BED hg38_Gencode_V28.norRNAtRNA.bed or mm10_Gencode_VM18.norRNAtRNA.bed.
+perl bin/geneLength.pl hg38_Gencode_V28.norRNAtRNA.1.bed 
+size=10092
+length	count
+376	29
+377	17
+378	25
+379	26
+380	30
+381	33
+382	37
+383	27
+384	35
+385	29
+386	38
+387	26
+....
 ```
+### splitByGeneLength.pl
+* Separate gencode bed file into N sections (default=3) by gene lengths.
+* For example, if you split hg38_Gencode_V28.norRNAtRNA.bed (total=90834):
+  - hg38_Gencode_V28.norRNAtRNA.1.bed (8-905) 30280 lines
+  - hg38_Gencode_V28.norRNAtRNA.2.bed (906-2355) 30280 lines
+  - hg38_Gencode_V28.norRNAtRNA.3.bed (2356-205012) 30274 lines
+* Command used is:
+```
+> perl bin/splitByGeneLength.pl hg38_Gencode_V28.norRNAtRNA.bed
+Total gene size: 90834
+Min gene length: 8
+Max gene length: 205012
+
+index	lengths	count
+0	8-905	30280
+1	906-2355	30280
+2	2356-205012	30274
+```
+* Use option '-o' to specify output directory (default='.').
+* Use option '-n' if you want to split into more sections.
+```
+>perl bin/splitByGeneLength.pl -o test -n 9 hg38_Gencode_V28.norRNAtRNA.bed
+Total gene size: 90834
+Min gene length: 8
+Max gene length: 205012
+
+index	lengths	count
+0	8-375	10094
+1	376-597	10092
+2	598-905	10094
+3	906-1381	10107
+4	1382-1844	10080
+5	1845-2355	10093
+6	2356-3114	10090
+7	3115-4487	10093
+8	4488-205012	10091
+```
+
 ## Singularity
 ### Building SIF
 * To build singularity image file (SIF) from docker image stored in docker hub, please use this command.
