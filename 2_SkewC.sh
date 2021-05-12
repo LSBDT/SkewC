@@ -29,7 +29,7 @@ mkdir -p $outdir
 workdir=`pwd`;
 if [ -x "$(command -v singularity)" ]; then
 singularity exec \
-  --bind $PWD
+  --bind $PWD \
   $sif \
   perl bin/SkewC.pl \
   $basename \

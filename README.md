@@ -78,7 +78,7 @@ outs/filtered_feature_bc_matrix/
 * If BAM files are split by cells already, you can skip this step.
 * If you don't mind using "input" as directory name, you can omit $outdir argument.
 * Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
-* RSeQC 'geneBody_coverage.py' required bam files to be indexed, but 'geneBodyCoverage.pl' doesn't need index files.
+* RSeQC 'geneBody_coverage.py' required bam files to be indexed, but geneBodyCoverage.pl doesn't need index files.
 * If you are not going to use RSeQC 'geneBody_coverage.py', you can skip this step.
 
 ### 1_geneBodyCoverage.sh
@@ -93,16 +93,20 @@ bash 1_geneBodyCoverage.sh $species $indir $outdir
 ```
 perl bin/geneBodyCoverage.pl -o coverage reference/hg38_Gencode_V28.norRNAtRNA.bed input/example.TTTGTCATCTAACGGT-1.bam > coverage/example.TTTGTCATCTAACGGT-1.log
 ```
-* 'geneBodyCoverage.pl' is a perl script to imitate process of RSeQC 'geneBody_coverage.py' (http://rseqc.sourceforge.net/#genebody-coverage-py).
-* 'geneBodyCoverage.pl' was written to reduce running time of geneBodyCoverage step by about 10 folds.
+* geneBodyCoverage.pl is a perl script to imitate process of RSeQC 'geneBody_coverage.py' (http://rseqc.sourceforge.net/#genebody-coverage-py).
+* geneBodyCoverage.pl was written to reduce running time of geneBodyCoverage step by about 10 folds.
 * Although same algorithm is used, output from geneBodyCoverage.pl and geneBody_coverage.py differs a bit, but it's negligible.
-* 'geneBodyCoverage.pl' will create an index file under a reference directory (default='reference') at the beginning of first iteration.  From second iteration on, indexed reference file will be used to speed up calculation.   Don't run geneBodyCoverage.pl in parallel (at the same time) when it's creating an index file.
+* geneBodyCoverage.pl will create an index file under a reference directory (default='reference') at the beginning of first iteration.  From second iteration on, indexed reference file will be used to speed up calculation.   Don't run geneBodyCoverage.pl in parallel (at the same time) when it's creating an index file.
 * Indexing reference files take about 5-10 minutes.
 * File size of index files are:
   * mm10 9MB bed file => 60MB index file
   * hg38 13MB bed file => 82MB index file
+* Computation time of geneBodyCoverage.pl is around 9min per 1GB.
+  * Test case: E-MTAB-2600 map to mm10.
+    * 869 files (each 1~2 GB) and total of 953GB.
+    * Took 143 hours to compute: 143hr/953GB = 9min/1GB
 * Reference column of BAM file from 10XGenomics, chromosome are represented without "chr".  For chr1 example, reference column of normal BAM file is written "chr1", but in 10XGenomics, it's written "1" only.
-* 'geneBodyCoverage.pl' will automatically detect the difference in reference column and create an index reference file with/without 'chr'.
+* geneBodyCoverage.pl will automatically detect the difference in reference column and create an index reference file with/without 'chr'.
 * Three files will be created under outdir (default='coverage')
   * XXXXXXXXXX.geneBodyCoverage
   * XXXXXXXXXX.geneBodyCoverage.txt -
@@ -127,6 +131,7 @@ bash 2_SkewC.sh $prjname $indir $outdir $alpha
    * bash 2_SkewC.sh test input output - tclust computation with auto alpha value
    * bash 2_SkewC.sh test input output 0.1 - tclust computation with alpha=0.1
    * bash 2_SkewC.sh test input output 0.1 0.2 0.3 0.4  - tclust computation with alpha=0.1, 0.2, 0.3, 0.4
+* Computation time of skewC is around 1~2 minutes.
 * Run SkewC analysis on all geneBody coverage files under indir
 * $prjname will be printed on PDF outputs.
 * References:
