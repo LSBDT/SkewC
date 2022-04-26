@@ -1,8 +1,8 @@
 ---
 title:  "SkewC_Create_Coverage_Matrix"
-author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical           Data Technology - RIKEN-IMS"
-date:    "October 13, 2020"
-SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10 cells}
+author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical Data Technology-RIKEN-IMS"
+date:    "April 26, 2022"
+SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10,000 cells}
 output: html_document
 ---
 
@@ -13,7 +13,7 @@ options(width=100)
 
 ## SkewC
 
-This is an R Markdown document to create the required coverage matrixes. The input is the vector of the normalized values from the genebody coverge script (coverage.r)file. In this file, each single-cell has a vector of numerical values. The each cell has a cell id with prefix SCC_
+This is an R Markdown document to create the coverage matrix. The input is the vector of the normalized values from the gene body coverage script (coverage.r) file which was created by batch script 1_geneBodyCoverage.sh. In this file, each single-cell has a vector of numerical values (n=100). Each cell has a cell id / cell barcode with prefix SCC_
 
 
 ```{r load required libraries}
@@ -108,7 +108,7 @@ Coverage_means_DF$pmeanAve100 <-
   rowMeans(Coverage_means_DF[c(p100)],na.rm=TRUE)
 ## {r write final output to R data frame}
 Coverage_means_DF <- Coverage_means_DF[,-c(1:100)]
-## Save Coverage_means_DF as Coverage_means_DF_Clust for Trim ## clustering use
+## Save Coverage_means_DF as Coverage_means_DF_Clust for Trim clustering
 Coverage_means_DF_Clust <- Coverage_means_DF
 ```
 
