@@ -28,7 +28,7 @@ DatasetTitle <- readline(prompt = "What is the dataset title?")
 ```
 ##
 ```{r Creat list var}
-## Initation of the initiation of variables and coverageValues
+## Initation of variables and "coverageValues"
 ## list
 vars <- ls(pattern = "SCC_")
 nvars <- length(vars)
