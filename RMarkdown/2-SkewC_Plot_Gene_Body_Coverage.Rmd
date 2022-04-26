@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This R Markdown use the put put from 
+This R Markdown use R data frame (Coverage_DF) the output from 1.	SkewC_Create_Coverage_Matrix.Rmd. Two types of plots are produced by this R Markdown; the Full gene bodyc coverage plot and the mean coverage plot.
 
 ```{r }
 
