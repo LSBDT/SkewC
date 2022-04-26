@@ -1,8 +1,8 @@
 ---
 title:  "SkewC_Create_Coverage_Matrix"
-author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical Data Technology - RIKEN-IMS"
-date:    "October 12, 2020"
-SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10 cells}
+author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical Data Technology-RIKEN-IMS"
+date:    "April 26, 2022"
+SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10,000 cells}
 output: html_document
 ---
 
@@ -12,9 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+This R Markdown use the put put from 
 
 ```{r }
 
