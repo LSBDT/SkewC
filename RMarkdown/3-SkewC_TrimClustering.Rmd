@@ -1,7 +1,7 @@
 ---
-title:  "SkewC_Create_Coverage_Matrix"
-author: "Imad Abugessaisa: Laboratory for Large-Scale Biomedical Data Technology - RIKEN-IMS"
-date:    "October 13, 2020"
+title:  "SkewC_TrimClustering"
+author: "Laboratory for Large-Scale Biomedical Data Technology - RIKEN-IMS"
+date:    "April 26, 2020"
 SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10 cells}
 ---
 
@@ -12,7 +12,8 @@ options(width=100)
 
 ## Skewc
 
-This is an R Markdown document to create the required coverage matrix. The input is the vector of the normalized values from the genebody coverge script. 
+This is an R Markdown document to perform tirm clustering. The input to this script was the R data frame (Coverage_means_DF_Clust) from 
+1.	1-SkewC_Create_Coverage_Matrix.Rmd
 
 ```{r load required libraries}
 library(tclust)
