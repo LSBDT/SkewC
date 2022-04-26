@@ -109,5 +109,15 @@ write.table(
   Skewed_coverage_cellIDDF <-
     as.data.frame(Skewed_coverage_cellID$Annotation)
     names(Skewed_coverage_cellIDDF)[1] <- "V1"
+###### 
+### Create the SkewCAnnotation data frame and save as rds
+names(Skewed_coverage_cellIDDF)[1] <- "cellid"
+Skewed_coverage_cellIDDF$SkewC <- 'Skewed'
+names(TypicalCells_cellIDDF)[1] <- "cellid"
+TypicalCells_cellIDDF$SkewC <- 'Typical'
+
+SkewCAnnotation <- rbind(Skewed_coverage_cellIDDF,TypicalCells_cellIDDF)
+saveRDS(SkewCAnnotation,file = "SkewCAnnotation.rds")
+   
 ```
 
