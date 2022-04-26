@@ -60,7 +60,7 @@ Coverage_DF$Annotation <- gsub(dfv, "", Coverage_DF$Annotation)
 
 ```
 ```{r }
-## Compute the mean coveage matrix Coverage_means_DF
+## Compute the mean coverage matrix Coverage_means_DF
 ## The data frame name Coverage_means_DF
 ## Coverage_means_DF consists of 10 columns [pmean10..pmean100] plus the ## cell ID column "Annotation"
 Coverage_means_DF <- Coverage_DF
