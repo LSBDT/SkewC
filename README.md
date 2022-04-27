@@ -72,9 +72,9 @@ outs/filtered_feature_bc_matrix/
     ├── features.tsv.gz
     └── matrix.mtx.gz
 ```
-* This script is for 10XGenomics (https://support.10xgenomics.com/).
+* This script is for 10x Genomics (https://support.10xgenomics.com/).
 * Before doing gene body coverage analysis, there is a need to split BAM files by cells.
-* Since 10XGenomics output one BAM file, split step is needed.
+* Since 10x Genomics output one BAM file, split step is needed.
 * If BAM files are split by cells already, you can skip this step.
 * If you don't mind using "input" as directory name, you can omit $outdir argument.
 * Multiple BAM files (separated by cell) will be created under specified output directory (default='input').
@@ -198,7 +198,7 @@ intersectBed -split -v -s -wa -a hg38_Gencode_V34.bed -b hg38_rRNA_tRNA.bed > hg
 ```
 
 ## Utilities
-* A collection of scripts for farther analysis.
+* A collection of scripts for further analysis.
 ### geneLength.pl
 * Simply print out gene length of a BED file.
 ```
@@ -269,6 +269,7 @@ singularity build skewc.sif docker://moirai2/skewc:latest
 * Split long genes 
 
 ## Updates
+* 2022/04/27 - Edit the text.
 * 2021/05/06 - More refined geneLength analysis.
 * 2021/04/22 - Modified script to use singularity, docker, or udocker.
 * 2021/04/20 - Added geneLength.pl for splitting genes into three length sets.
