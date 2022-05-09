@@ -1,9 +1,9 @@
 #!/bin/bash
-if [ $# -lt 0 ]; then
+if [ $# -lt 1 ]; then
   echo ""
   echo "Usage: ./2_SkewC.sh \$prjname \$indir \$outdir \$alpha"
   echo ""
-  echo " \$prjname   name of the project (Default=COV)"
+  echo " \$prjname   name of the project (Required)"
   echo "   \$indir   directory where coverage files are stored (Default=coverage)"
   echo "  \$outdir   directory where results files will be output (Default=skewc)"
   echo "  \$alpha    alpha value to be used for computation of tclust (Default=auto)"
@@ -62,5 +62,5 @@ udocker run \
   $outdir \
   $alpha
 else
-  echo "Please install udocker or docker"
+  echo "Please install docker, singularity, or udocker"
 fi

@@ -3,8 +3,8 @@ if [ $# -lt 2 ]; then
   echo ""
   echo "Usage: ./0_split10XbyBarcode.sh \$bam \$barcode \$outdir"
   echo ""
-  echo "  \$bam      BAM file of 10XGenomics"
-  echo "  \$barcode  barcode.tsv file of 10XGenomics"
+  echo "  \$bam      BAM file of 10XGenomics (Required)"
+  echo "  \$barcode  barcode.tsv file of 10XGenomics (Required)"
   echo "  \$outdir   Directory where splitted bam files will be output (Default=input)"
   echo ""
   exit
@@ -50,5 +50,5 @@ udocker run \
   $bam \
   $barcode
 else
-  echo "Please install udocker or docker"
+  echo "Please install docker, singularity, or udocker"
 fi

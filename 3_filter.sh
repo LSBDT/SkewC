@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -lt 1 ]; then
   echo ""
-  echo "Usage: ./3_filter.sh \$filter \$indir \$matchdir \$unmatchdir"
+  echo "Usage: ./util_filter.sh \$filter \$indir \$matchdir \$unmatchdir"
   echo ""
   echo "    \$filter   Filter file (Default=coverage)"
   echo "     \$indir   Input directory (Default=coverage)"
@@ -62,5 +62,5 @@ udocker run \
   $match \
   $unmatch
 else
-  echo "Please install udocker or docker"
+  echo "Please install docker, singularity, or udocker"
 fi

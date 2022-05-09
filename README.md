@@ -8,8 +8,8 @@ hdrgenome/
 ├── 1_geneBodyCoverage.sh
 ├── 2_SkewC.sh
 ├── 3_filter.sh
-├── bash.sh
 ├── bin/
+│   ├── download_sample.sh
 │   ├── filter.pl
 │   ├── geneBodyCoverage.pl
 │   ├── geneLength.pl
@@ -18,20 +18,20 @@ hdrgenome/
 │   ├── split10XbyBarcode.pl
 │   ├── splitByGeneLength.pl
 │   └── workers.pl
-├── example/
-│   ├── barcodes.tsv.gz
-│   ├── coverage.r - sample data for SkewC Rmarkdown
-│   └── example.bam
+├── container_bash.sh
 ├── LICENSE
 ├── README.md
 ├── reference/
 │   ├── hg38_Gencode_V28.norRNAtRNA.bed
 │   └── mm10_Gencode_VM18.norRNAtRNA.bed
-└── RMarkdown/
-    ├── 1-SkewC_Create_Coverage_Matrixes.Rmd
-    ├── 2-SkewC_Plot_Gene_Body_Coverage.Rmd
-    ├── 3-SkewC_TrimClustering.Rmd
-    └── 4-SkewC_Plot_Typical_Skewed_Coverage.Rmd
+├── RMarkdown/
+│   ├── 1-SkewC_Create_Coverage_Matrixes.Rmd
+│   ├── 2-SkewC_Plot_Gene_Body_Coverage.Rmd
+│   ├── 3-SkewC_TrimClustering.Rmd
+│   └── 4-SkewC_Plot_Typical_Skewed_Coverage.Rmd
+├── TestData/
+│   └── coverage.r - sample data for SkewC Rmarkdown
+└── util_sample.sh
 ```
 ## System
 * Linux or MacOSX

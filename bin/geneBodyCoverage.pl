@@ -6,8 +6,8 @@ use DirHandle;
 use strict;
 use Getopt::Std;
 use Time::localtime;
-use vars qw($opt_o $opt_p);
-getopts('o:p');
+use vars qw($opt_g $opt_o $opt_p);
+getopts('go:p');
 ############################## help ##############################
 if(scalar(@ARGV)<2){
 	print STDERR "\n";
@@ -22,6 +22,7 @@ if(scalar(@ARGV)<2){
 	print STDERR "  \$skewness   Skewness value\n";
 	print STDERR "\n";
 	print STDERR "Option:\n";
+	print STDERR "     -g  Calculate by gene (default='average')\n";
 	print STDERR "     -o  Output directory (default='coverage')\n";
 	print STDERR "     -p  Skip plot command lines in R output\n";
 	print STDERR "\n";
@@ -67,14 +68,23 @@ foreach my $inputfile(@inputfiles){
 	my $convertedflag=0;
 	my $basename=($inputfile=~/\.bam$/)?basename($inputfile,".bam"):basename($inputfile,".bed");
 	if($inputfile=~/\.bam$/){$inputfile=convertBamToBed($reference,$inputfile);$convertedflag=1;}
-	my @counts=geneBodyCoverage($indexfile,$inputfile,$reference);
-	if($convertedflag){unlink($inputfile);}
-	outputText($basename,@counts);
-	outputR($basename,$opt_p,@counts);
-	my $endTime=time();
-	my $diff=$endTime - $startTime;
-	print "$basename\t".pearsonMomentCoefficient(@counts)."\t".int($diff)." sec\n";
+	my $positions=loadPositions($indexfile,$inputfile);
+	if(defined($opt_g)){
+		my $counts=geneBodyCoverageByGenes($indexfile,$inputfile,$positions);
+		if($convertedflag){unlink($inputfile);}
+		outputTextByGenes($basename,$counts);
+		outputJsonByGenes($basename,$counts);
+	}else{
+		my @counts=geneBodyCoverage($indexfile,$inputfile,$positions);
+		if($convertedflag){unlink($inputfile);}
+		outputText($basename,@counts);
+		outputR($basename,$opt_p,@counts);
+		my $endTime=time();
+		my $diff=$endTime-$startTime;
+		print "$basename\t".pearsonMomentCoefficient(@counts)."\t".int($diff)." sec\n";
+	}
 }
+print STDERR "DONE\n";
 ############################## checkChrName ##############################
 sub checkChrName{
 	my $inputfile=shift();
@@ -131,6 +141,20 @@ sub noChrFile{
 	close(OUT);
 	return $outfile;
 }
+############################## outputTextByGenes ##############################
+sub outputTextByGenes{
+	my $basename=shift();
+	my $counts=shift();
+	open(OUT,">$outdir/$basename.geneBodyCoverage.txt");
+	my @numbers=();
+	for(my $i=1;$i<101;$i++){push(@numbers,$i);}
+	print OUT "Percentile\t".join("\t",@numbers)."\n";
+	foreach my $id(sort{$a cmp $b}keys(%{$counts})){
+		my @array=@{$counts->{$id}};
+		print OUT "$id\t".join("\t",@array)."\n";
+	}
+	close(OUT);
+}
 ############################## outputText ##############################
 sub outputText{
 	my @counts=@_;
@@ -138,7 +162,7 @@ sub outputText{
 	open(OUT,">$outdir/$basename.geneBodyCoverage.txt");
 	my @numbers=();
 	for(my $i=1;$i<101;$i++){push(@numbers,$i);}
-	print OUT "Percentile	".join("\t",@numbers)."\n";
+	print OUT "Percentile\t".join("\t",@numbers)."\n";
 	print OUT "$basename\t".join("\t",@counts)."\n";
 	close(OUT);
 }
@@ -159,6 +183,26 @@ sub outputR{
 	print OUT "icolor = colorRampPalette(c(\"#7fc97f\",\"#beaed4\",\"#fdc086\",\"#ffff99\",\"#386cb0\",\"#f0027f\"))(1)\n";
 	print OUT "plot(x,$basename2,type='l',xlab=\"Gene body percentile (5'->3')\", ylab=\"Coverage\",lwd=0.8,col=icolor[1])\n";
 	print OUT "dev.off()\n";
+	close(OUT);
+}
+############################## outputJsonByGenes ##############################
+sub outputJsonByGenes{
+	my $basename=shift();
+	my $counts=shift();
+	my @lines=();
+	open(OUT,">$outdir/$basename.geneBodyCoverage.json");
+	print OUT "{\n";
+	my @ids=sort{$a cmp $b}keys(%{$counts});
+	my $total=scalar(@ids);
+	for(my $i=0;$i<$total;$i++){
+		my $id=$ids[$i];
+		print OUT "\"$id\":";
+		my @array=@{$counts->{$id}};
+		print OUT "[".join(",",@array)."]";
+		if($i+1<$total){print OUT ",\n";}
+		else{print OUT "\n";}
+	}
+	print OUT "}\n";
 	close(OUT);
 }
 ############################## normalize ##############################
@@ -332,11 +376,10 @@ sub calculatePercentile{
 	close(IN);
 	close(OUT);
 }
-############################## geneBodyCoverage ##############################
-sub geneBodyCoverage{
+############################## loadPositions ##############################
+sub loadPositions{
 	my $indexfile=shift();
 	my $bedfile=shift();
-	my $reference=shift();
 	my $positions={};
 	my $pairs={};
 	print STDERR "# Loading reference positions: $indexfile\n";
@@ -361,11 +404,17 @@ sub geneBodyCoverage{
 		}
 	}
 	close(IN);
+	return $positions;
+}
+############################## geneBodyCoverage ##############################
+sub geneBodyCoverage{
+	my $indexfile=shift();
+	my $bedfile=shift();
+	my $positions=shift();
 	print STDERR "# Calculating genebody coverage: $bedfile\n";
 	open(IN,$indexfile);
 	my @counts=();
 	for(my $i=0;$i<100;$i++){$counts[$i]=0;}
-	#my $ids={};
 	while(<IN>){
 		chomp;
 		my ($id,$chr,$strand,@percents)=split(/\t/);
@@ -374,21 +423,38 @@ sub geneBodyCoverage{
 			if(exists($positions->{$chr}->{$pos})&&$positions->{$chr}->{$pos}>0){
 				my $index=($strand eq "+")?$i:(99-$i);
 				$counts[$index]+=$positions->{$chr}->{$pos};
-				#$ids->{$id}=1;
 			}
 		}
 	}
 	close(IN);
-	#open(IN,$reference);
-	#while(<IN>){
-	#	chomp;
-	#	if(/^#/){print "$_\n";next;}
-	#	my ($chr,$start,$end,$id,$score,$strand,$thickStart,$thickEnd,$itemRgb,$blockCount,$blockSizes,$blockStarts)=split(/\t/);
-	#	if(!exists($ids->{$id})){next;}
-	#	print "$_\n";
-	#}
-	#close(IN);
 	return @counts;
+}
+############################## geneBodyCoverageByGenes ##############################
+sub geneBodyCoverageByGenes{
+	my $indexfile=shift();
+	my $bedfile=shift();
+	my $positions=shift();
+	print STDERR "# Calculating genebody coverage by genes: $bedfile\n";
+	open(IN,$indexfile);
+	my $hash={};
+	while(<IN>){
+		chomp;
+		my @counts=();
+		my $total=0;
+		for(my $i=0;$i<100;$i++){$counts[$i]=0;}
+		my ($id,$chr,$strand,@percents)=split(/\t/);
+		for(my $i=0;$i<100;$i++){
+			my $pos=$percents[$i];
+			if(exists($positions->{$chr}->{$pos})&&$positions->{$chr}->{$pos}>0){
+				$total++;
+				my $index=($strand eq "+")?$i:(99-$i);
+				$counts[$index]+=$positions->{$chr}->{$pos};
+			}
+		}
+		if($total>0){$hash->{$id}=\@counts;}
+	}
+	close(IN);
+	return $hash;
 }
 ############################## printTable ##############################
 sub printTable{

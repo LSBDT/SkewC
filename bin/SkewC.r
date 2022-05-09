@@ -187,6 +187,17 @@ write.table(
     as.data.frame(Skewed_coverage_cellID$Annotation)
     names(Skewed_coverage_cellIDDF)[1]<-"V1"
 
+###### 
+### Create the SkewCAnnotation data frame and save as rds
+skewedCopy<-data.frame(Skewed_coverage_cellIDDF)
+typicalCopy<-data.frame(TypicalCells_cellIDDF)
+names(skewedCopy)[1] <- "cellid"
+skewedCopy$SkewC <- 'Skewed'
+names(typicalCopy)[1] <- "cellid"
+typicalCopy$SkewC <- 'Typical'
+SkewCAnnotation <- rbind(skewedCopy,typicalCopy)
+saveRDS(SkewCAnnotation,file = paste(plotDir,"SkewCAnnotation.rds",sep="/"))
+
 ### SkewC_Plot_Typical_Skewed_Coverage.Rmd ###
 
 knitr::opts_chunk$set(echo=TRUE)

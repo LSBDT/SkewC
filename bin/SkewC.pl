@@ -64,7 +64,7 @@ print OUT "<tr><th>FullCoverage</th><th>MeanCoverage</th></tr>\n";
 print OUT "<tr><td><a href=\"$dir/FullCoverage.pdf\"><embed src=\"$dir/FullCoverage.pdf\" width=300 height=300></a></td><td><a href=\"$dir/MeanCoverage.pdf\"><embed src=\"$dir/MeanCoverage.pdf\" width=300 height=300></a></td></tr>\n";
 print OUT "</table>\n";
 print OUT "<table border=1>\n";
-print OUT "<tr><th>Alpha</th><th>CLUSTResult</th><th>TypicalcellFullCoverage</th><th>SkewedcellFullCoverage</th><th>Typical</th><th>Skew</th></tr>\n";
+print OUT "<tr><th>Alpha</th><th>CLUSTResult</th><th>TypicalcellFullCoverage</th><th>SkewedcellFullCoverage</th><th>Typical</th><th>Skew</th><th>Data</th></tr>\n";
 foreach my $dir(@alphaValues){
 	my $typicalFile="$dir/TypicalCellsID.tsv";
 	my $skewFile="$dir/SkewedCellsID.tsv";
@@ -81,6 +81,7 @@ foreach my $dir(@alphaValues){
 	print OUT "<td><a href=\"$dir/SkewedcellFullCoverage.pdf\"><embed src=\"$dir/SkewedcellFullCoverage.pdf\" width=300 height=300></a></td>\n";
 	print OUT "<td><a href=\"$typicalFile\">$typicalCount</a></td>\n";
 	print OUT "<td><a href=\"$skewFile\">$skewCount</a></td>\n";
+	print OUT "<td><a href=\"$dir/SkewCAnnotation.rds\">RDS</a></td>\n";
 	print OUT "</tr>\n";
 }
 print OUT "</table>\n";
@@ -88,6 +89,7 @@ print OUT "</center>\n";
 print OUT "</body>\n";
 print OUT "</html>\n";
 close(OUT);
+print STDERR "DONE\n";
 ############################## listAlphaDirs ##############################
 sub listAlphaDirs{
 	my $directory=shift();

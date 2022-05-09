@@ -1,9 +1,9 @@
 #!/bin/bash
-if [ $# -lt 0 ]; then
+if [ $# -lt 1 ]; then
   echo ""
   echo "Usage: ./1_geneBodyCoverage.sh \$species \$indir \$outdir"
   echo ""
-  echo "  \$species  mm10 [mouse] or hg38 [human]"
+  echo "  \$species  mm10 [mouse] or hg38 [human] (Required)"
   echo "  \$indir    directory where BAM files and BAI files are stored (Default=input)"
   echo "  \$outdir   directory where coverage files will be output (Default=coverage)"
   echo ""
