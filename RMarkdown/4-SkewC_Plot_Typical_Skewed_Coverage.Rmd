@@ -1,7 +1,7 @@
 ---
 title:  "SkewC_Plot_Typical_Skewed_Coverage"
 author: "Laboratory for Large-Scale Biomedical Data Technology - RIKEN-IMS"
-date:    "April 26, 2020"
+date:    "August 18, 2022"
 SkewC R : Version 0.3 {Solve R memory issue with large dataset with more that 10,000 cells}
 output: html_document
 ---
@@ -32,7 +32,7 @@ You can also embed plots, for example:
 Coverage_DF_meltedTypicalCells <-
   subset(Coverage_DF_melted, Annotation %in% TypicalCells_cellIDDF$V1)
   pdf(paste("./", DatasetTitle, "TypicalcellFullCoverage.pdf"))
-  color = rgb(0, 0, 0, alpha = 0.25)
+  color = rgb(5,245,17,maxColorValue = 255,alpha=70)
   par(mai = c(0.82, 0.82, 0.41, 0.12))
 
   fullPlotTypical <-
@@ -84,7 +84,7 @@ dev.off()
 Coverage_DF_meltedSkewedCells <- 
   subset(Coverage_DF_melted,Annotation %in% Skewed_coverage_cellIDDF$V1)
 pdf(paste("./",DatasetTitle,"SkewedcellFullCoverage.pdf"))
-color=rgb(0,0,0,alpha=0.25) 
+color=rgb(252,5,5,maxColorValue = 255,alpha=70)
 par(mai=c(0.82,0.82,0.41,0.12))
 
 fullPlotSkewed <- ggplot(data = Coverage_DF_meltedSkewedCells, aes(x=variable, y=value,group=Annotation)) 
