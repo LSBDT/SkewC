@@ -25,7 +25,7 @@ foreach my $file(@files){
 	open(IN,$file);
 	while(<IN>){
 		chomp;
-		if(/^(\S+)\s+\<\- c\([\d\.\,]+\)/){
+		if(/^(\S+)\s+\<\- c\(.+\)/){
 			my $id=$1;
 			print $fh "${basename}$_\n";
 		}

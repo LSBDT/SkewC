@@ -205,7 +205,8 @@ knitr::opts_chunk$set(echo=TRUE)
 Coverage_DF_meltedTypicalCells <-
   subset(Coverage_DF_melted,Annotation %in% TypicalCells_cellIDDF$V1)
   pdf(paste(plotDir,"TypicalcellFullCoverage.pdf",sep="/"))
-  color=rgb(0,0,0,alpha=0.25)
+  #color=rgb(0,0,0,alpha=0.25)
+  color=rgb(5,245,17,maxColorValue=255,alpha=70)
   par(mai=c(0.82,0.82,0.41,0.12))
 
   fullPlotTypical <-
@@ -246,7 +247,8 @@ dev.off()
 Coverage_DF_meltedSkewedCells <-
   subset(Coverage_DF_melted,Annotation %in% Skewed_coverage_cellIDDF$V1)
 pdf(paste(plotDir,"SkewedcellFullCoverage.pdf",sep="/"))
-color=rgb(0,0,0,alpha=0.25)
+#color=rgb(0,0,0,alpha=0.25)
+color=rgb(252,5,5,maxColorValue=255,alpha=70)
 par(mai=c(0.82,0.82,0.41,0.12))
 
 fullPlotSkewed<-ggplot(data=Coverage_DF_meltedSkewedCells,aes(x=variable,y=value,group=Annotation))
