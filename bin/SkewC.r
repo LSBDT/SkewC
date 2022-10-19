@@ -1,3 +1,4 @@
+.libPaths("/usr/lib/R/site-library")#library path for singularity/docker image environment
 library(reshape2)
 library(ggplot2)
 library(Rmisc)
